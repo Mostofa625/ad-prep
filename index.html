@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AD Prep</title>
+  <meta name="description" content="Offline study planner for Grade 9 Assistant Director exams">
+  <meta name="theme-color" content="#1f6f5c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1 id="title">Today</h1>
+    <span id="subtitle" class="muted"></span>
+  </header>
+
+  <main id="view" tabindex="-1"></main>
+
+  <nav class="tabs" aria-label="Sections">
+    <a href="#today" data-tab="today"><span aria-hidden="true">☀</span>Today</a>
+    <a href="#plan" data-tab="plan"><span aria-hidden="true">▦</span>Plan</a>
+    <a href="#mistakes" data-tab="mistakes"><span aria-hidden="true">✎</span>Mistakes</a>
+    <a href="#essays" data-tab="essays"><span aria-hidden="true">¶</span>Essays</a>
+    <a href="#more" data-tab="more"><span aria-hidden="true">⋯</span>More</a>
+  </nav>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
