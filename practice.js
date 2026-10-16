@@ -200,16 +200,17 @@ function resultView(rid) {
 function patternsView() {
   setHeader('Patterns', PATTERNS.source);
   return `<p class="muted small">${esc(PATTERNS.note)}</p>
-    ${PATTERNS.papers?.length ? `<h2>How past AD papers are made</h2>${PATTERNS.papers.map(p => { const tot = p.mix.reduce((a, m) => a + m[1], 0);
+    ${PATTERNS.papers?.length ? `<h2>How the papers are made</h2>${PATTERNS.papers.map(p => { const tot = p.mix.reduce((a, m) => a + m[1], 0);
       return `<div class="card"><div class="row between"><h3>${esc(p.name)}</h3><span class="muted small">${esc(p.info)}</span></div>
         ${p.mix.map(([s, n]) => `<div style="margin-top:6px"><div class="row between small"><span>${esc(s)}</span><span class="muted">${n}</span></div>
         <div class="progress"><i style="width:${pct(n, tot)}%"></i></div></div>`).join('')}</div>`; }).join('')}` : ''}
     ${PATTERNS.insights?.length ? `<h2>What this means for you</h2><div class="card"><ul class="plain small">${PATTERNS.insights.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}
-    ${PATTERNS.subjects.map(s => `<h2>${esc(s.name)}</h2>
-      <div class="card"><p class="small muted">${esc(s.summary)}</p>
-      <ul class="plain small">${s.topics.map(t => `<li><div class="row between"><b>${esc(t.name)}</b><span class="tag">${t.share}%</span></div>
+    ${PATTERNS.subjects.length ? '<h2 style="margin-top:26px">Most-asked topics by subject</h2><p class="muted small">Number of BCS preliminary questions (10th–50th) on each topic, and its share of that subject.</p>' : ''}
+    ${PATTERNS.subjects.map(s => `<details class="card"><summary>${esc(s.name)} <span class="muted small">${s.total ? s.total + ' questions' : ''}</span></summary>
+      <div style="margin-top:8px"><p class="small muted">${esc(s.summary)}</p>
+      <ul class="plain small">${s.topics.map(t => `<li><div class="row between"><b>${esc(t.name)}</b><span class="tag">${t.n ? t.n + ' Q · ' : ''}${t.share}%</span></div>
         <div class="progress" style="margin:4px 0"><i style="width:${Math.min(100, t.share * 3)}%"></i></div>
-        ${t.tip ? `<span class="muted">${esc(t.tip)}</span>` : ''}</li>`).join('')}</ul></div>`).join('')}
+        ${t.tip ? `<span class="muted">${esc(t.tip)}</span>` : ''}</li>`).join('')}</ul></div></details>`).join('')}
     ${PATTERNS.repeats?.length ? `<h2>Asked again and again</h2><div class="card"><ul class="plain small">${PATTERNS.repeats.map(r =>
       `<li><div class="row between"><span>${esc(r.q)}</span><span class="tag">${r.n}×</span></div><span class="muted">${esc(r.a)}</span></li>`).join('')}</ul></div>` : ''}
     <a class="btn" href="#practice">Back to Practice</a>`;
