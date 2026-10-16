@@ -211,8 +211,8 @@ function patternsView() {
       <ul class="plain small">${s.topics.map(t => `<li><div class="row between"><b>${esc(t.name)}</b><span class="tag">${t.n ? t.n + ' Q · ' : ''}${t.share}%</span></div>
         <div class="progress" style="margin:4px 0"><i style="width:${Math.min(100, t.share * 3)}%"></i></div>
         ${t.tip ? `<span class="muted">${esc(t.tip)}</span>` : ''}</li>`).join('')}</ul></div></details>`).join('')}
-    ${PATTERNS.repeats?.length ? `<h2>Asked again and again</h2><div class="card"><ul class="plain small">${PATTERNS.repeats.map(r =>
-      `<li><div class="row between"><span>${esc(r.q)}</span><span class="tag">${r.n}×</span></div><span class="muted">${esc(r.a)}</span></li>`).join('')}</ul></div>` : ''}
+    ${PATTERNS.repeats?.length ? `<h2>Asked again and again</h2><p class="muted small">The same question in several BCS papers. These are high-value: learn them all.</p><div class="card"><ul class="plain small">${PATTERNS.repeats.map(r =>
+      `<li><div class="row between"><span>${esc(r.q)}</span><span class="tag">${r.n} BCS</span></div><span class="muted">${esc(r.a)}</span></li>`).join('')}</ul></div>` : ''}
     <a class="btn" href="#practice">Back to Practice</a>`;
 }
 
