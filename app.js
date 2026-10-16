@@ -7,7 +7,7 @@ const ESSAY_MINS = 30;
 
 // ---------- storage ----------
 function blank() {
-  return { checks: {}, mistakes: [], essays: [], exams: DEFAULT_EXAMS.map(e => ({ ...e })), viva: {}, scores: [], draft: { prompt: 0, text: '' } };
+  return { checks: {}, mistakes: [], essays: [], exams: DEFAULT_EXAMS.map(e => ({ ...e })), viva: {}, scores: [], draft: { prompt: 0, text: '' }, attempts: [], test: null, neg: 0.25 };
 }
 let S = load();
 function load() {
@@ -404,6 +404,8 @@ const actions = {
     S = blank(); save(); render(); toast('Erased');
   },
 };
+Object.assign(views, PRACTICE.views);
+Object.assign(actions, PRACTICE.actions);
 
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-action]');
@@ -412,7 +414,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('change', e => {
   const el = e.target;
-  if (el.matches('input[type=checkbox], input[type=date], input[type=file]')) actions[el.dataset.action]?.(el);
+  if (el.matches('input[type=checkbox], input[type=radio], input[type=date], input[type=file], select[data-action]')) actions[el.dataset.action]?.(el);
   else if (el.matches('[data-action=exam-status]')) actions['exam-status'](el);
 });
 document.addEventListener('input', e => {
