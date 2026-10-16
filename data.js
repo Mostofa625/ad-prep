@@ -1,6 +1,6 @@
 // Static study content. Edit this file to change the plan; user progress lives in localStorage (see app.js).
 
-const PLAN_START = '2026-10-15'; // Thursday, week 1 day 1
+const PLAN_START = '2026-10-18'; // Sunday, week 1 day 1
 const PLAN_WEEKS = 12;
 
 // Daily sessions (Sun–Thu). Friday and Saturday have their own lists.

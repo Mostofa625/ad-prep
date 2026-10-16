@@ -9,7 +9,7 @@ Offline study PWA for Mostofa's Grade 9 Assistant Director exam prep (MoD, BEPZA
 - `sw.js` – network-first cache. **Bump `VERSION` whenever any cached file changes.**
 
 ## Behaviour worth knowing
-- Plan starts 2026-10-15, 12 weeks. Fri = mock, Sat = written + revision.
+- Plan starts Sunday 2026-10-18, 12 weeks (Sun–Sat). Fri = mock, Sat = written + revision.
 - Weeks 11–12, or within 14 days of any exam with a date, switch to alternating mock/review days; the day before an exam is light revision.
 - Mistakes use Leitner boxes (1, 2, 4, 8, 16, 32 days); "wrong" resets to box 1 and re-queues in-session.
 - `?d=YYYY-MM-DD` in the URL fakes today's date for checking future days.
