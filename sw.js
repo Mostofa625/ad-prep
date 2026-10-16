@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file below changes so phones pick up the update.
-const VERSION = 'v4';
+const VERSION = 'v5';
 const FILES = ['./', 'index.html', 'style.css', 'data.js', 'questions.js', 'patterns.js', 'practice.js', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
