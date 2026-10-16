@@ -10,6 +10,7 @@ const PATTERNS = {
     { name: 'NSI – Assistant Director (2015)', info: '100 MCQ · approx. split, BCS-style', mix: [['Bangla', 16], ['English', 9], ['Bangladesh affairs', 25], ['International affairs', 10], ['Geography & disaster', 4], ['Science & ICT', 11], ['Math', 17], ['Mental ability', 5], ['Ethics & good governance', 3]] },
   ],
   insights: [
+    'Recent AD papers (2020–2026: ACC/দুদক, MRA, Ministry of Defence, NSI, BARD, REB, Payra Port) lean on: Bangladesh geography basics (borders, northernmost/southernmost places, EEZ), constitution article numbers (88, 91, 20, 137), Liberation War sectors and films, world capitals, currencies and legislatures, and economy institutions (DSE, BSEC, BEZA, BEPZA). Questions tagged with these exams are in the app; the explanation names the exam.',
     'Every paper asks about the recruiting organisation itself: NSI papers ask about intelligence agencies (NSI, DGFI, CIA, Mossad, RAW); Ministry of Defence papers ask about the armed forces, peacekeeping, Armed Forces Day and defence departments. Practise the "Organisation GK" topic.',
     'Bangla is mostly grammar, not literature: বানান, শুদ্ধ বাক্য, সন্ধি, সমাস, কারক, সমার্থক/বিপরীত শব্দ, বাগধারা, এক কথায় প্রকাশ and পারিভাষিক শব্দ. Literature questions are usually "who wrote this line / book".',
     'English is short and practical: word meaning, synonyms, idioms, prepositions, correct sentence, verb form ("had better", "it is time", "as if"), voice and spelling, plus 1–2 literature questions (Shakespeare, Milton).',
