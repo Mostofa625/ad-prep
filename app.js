@@ -56,7 +56,7 @@ function sessionsFor(date = TODAY) {
       { id: 'light', label: 'Light revision only: formulas, GK notes, essay template', mins: 90 },
       { id: 'docs', label: 'Prepare admit card, pen, ID; check exam centre route', mins: 20 },
     ], note: 'No new topics. Sleep early.' };
-    const why = examSoon ? `${exam.name} in ${diff(date, exam.date)} days` : 'Weeks 11–12';
+    const why = examSoon ? `${exam.name} in ${diff(date, exam.date)} days` : week > PLAN_WEEKS ? 'Plan finished: keep the mock routine' : 'Weeks 11–12';
     return idx % 2 === 0
       ? { kind: 'Mock day', list: MOCK_DAY, note: why }
       : { kind: 'Review day', list: REVIEW_DAY, note: why };
