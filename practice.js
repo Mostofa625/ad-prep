@@ -74,7 +74,7 @@ function finishTest() {
   let added = 0;
   for (const id of t.ids) {
     const q = QBY[id];
-    if (t.ans[id] === undefined || t.ans[id] === q.a || S.mistakes.some(m => m.qid === id)) continue;
+    if (!q || t.ans[id] === undefined || t.ans[id] === q.a || S.mistakes.some(m => m.qid === id)) continue;
     S.mistakes.push({ id: uid(), qid: id, subject: q.s === 'GK' ? 'GK' : q.s, q: q.q + '\n\n' + optOrder(t, id).map((i, k) => `${LETTERS[k]}) ${q.o[i]}`).join('\n'),
       a: `${letter(t, id, q.a)}) ${q.o[q.a]}`, note: q.e || '', box: 0, due: addDays(TODAY, 1), created: TODAY });
     added++;
@@ -139,6 +139,9 @@ function practiceHome() {
 function testView() {
   const t = S.test;
   if (!t) { location.hash = 'practice'; return ''; }
+  // drop questions removed from the bank since this test started
+  if (t.ids.some(x => !QBY[x])) { t.ids = t.ids.filter(x => QBY[x]); t.i = Math.min(t.i, t.ids.length - 1); save(); }
+  if (!t.ids.length) { S.test = null; save(); location.hash = 'practice'; return ''; }
   const id = t.ids[t.i], q = QBY[id];
   const left = t.limit - Math.round((Date.now() - t.start) / 1000);
   const done = Object.keys(t.ans).length;
