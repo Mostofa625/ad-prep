@@ -49,6 +49,30 @@ function pick(pool, n) {
   return shuffle(pool).sort((a, b) => rank(a) - rank(b) || (b.r || 0) - (a.r || 0)).slice(0, n);
 }
 
+// 30-MCQ test after a subject session: 20 from this week's topics, 10 revising earlier weeks.
+// Weeks 9–12 (empty topic list) draw from the whole subject, Assistant Director paper questions first.
+const SUBJ_N = 30, SUBJ_MINS = 20;
+const AD_RX = /সহকারী পরিচালক|উপ-?সহকারী পরিচালক|এনএসআই|প্রতিরক্ষা মন্ত্রণালয়|প্রধানমন্ত্রীর কার্যালয়|\bAD\b|NSI/;
+const subjTestMode = (subj, week) => `${subj} 30-MCQ · week ${week}`;
+function subjectTestIds(subj, week) {
+  const inSubj = (q, topics) => topics.includes(q.t);
+  const wk = WEEK_TOPICS[Math.min(week, WEEK_TOPICS.length) - 1]?.[subj] || [];
+  const earlier = [...new Set(WEEK_TOPICS.slice(0, Math.max(0, week - 1)).flatMap(w => w[subj] || []))];
+  const used = new Set();
+  const take = (pool, n) => { const got = pick(pool.filter(q => !used.has(q.id)), n); got.forEach(q => used.add(q.id)); return got; };
+  let qs;
+  if (!wk.length) {
+    const all = QUESTIONS.filter(q => q.s === subj);
+    qs = [...take(all.filter(q => AD_RX.test(q.e || '')), 15)];
+    qs.push(...take(all, SUBJ_N - qs.length));
+  } else {
+    qs = take(QUESTIONS.filter(q => inSubj(q, wk)), 20);
+    if (earlier.length) qs.push(...take(QUESTIONS.filter(q => inSubj(q, earlier)), SUBJ_N - qs.length));
+    qs.push(...take(QUESTIONS.filter(q => q.s === subj || wk.includes(q.t)), SUBJ_N - qs.length));
+  }
+  return shuffle(qs.map(q => q.id));
+}
+
 function startTest(mode, ids, mins) {
   const ord = Object.fromEntries(ids.map(id => [id, shuffle([0, 1, 2, 3])]));
   S.test = { id: uid(), mode, ids, ord, ans: {}, flag: {}, i: 0, start: Date.now(), limit: mins * 60 };
@@ -268,6 +292,11 @@ const PRACTICE = {
       startTest('Retry wrong', shuffle(ids), Math.max(5, Math.ceil(ids.length * 0.6)));
     },
     'p-neg'(el) { S.neg = +el.value; save(); render(); },
+    'p-subj30'(el) {
+      if (S.test && !confirm('Discard the test in progress?')) return;
+      const subj = el.dataset.v, week = Math.max(1, planDay().week);
+      startTest(subjTestMode(subj, week), subjectTestIds(subj, week), SUBJ_MINS);
+    },
   },
 };
 

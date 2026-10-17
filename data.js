@@ -60,6 +60,24 @@ const WEEKS = [
   ['Mocks + review', 'Mocks + review', 'Mocks + review', 'Mocks + review'],
 ];
 
+// Question-bank topics (QUESTIONS[].t) covered each week, used for the 30-MCQ test after each subject session.
+// An empty list (weeks 9–12) means the whole subject.
+const SESSION_SUBJECT = { eng: 'English', math: 'Math', gk: 'GK', bn: 'Bangla' };
+const WEEK_TOPICS = [
+  { English: ['Parts of speech', 'Subject–verb agreement'], Math: ['Number system', 'LCM & HCF'], GK: ['Liberation War', 'Bangladesh: 1952–1971', 'Bangladesh: history'], Bangla: ['ধ্বনি ও বর্ণ', 'সন্ধি'] },
+  { English: ['Tense & verb forms'], Math: ['Percentage, profit & loss'], GK: ['Bangladesh: Constitution'], Bangla: ['সমাস', 'কারক ও বিভক্তি'] },
+  { English: ['Prepositions'], Math: ['Ratio & proportion'], GK: ['Bangladesh geography'], Bangla: ['বানান ও বাক্যশুদ্ধি', 'প্রকৃতি-প্রত্যয় ও উপসর্গ'] },
+  { English: ['Voice & narration'], Math: ['Time, work & speed'], GK: ['Bangladesh economy & projects', 'Bangladesh: agriculture & census', 'Bangladesh: national achievements'], Bangla: ['বাগধারা ও প্রবাদ', 'এক কথায় প্রকাশ'] },
+  { English: ['Clauses & sentences', 'Word formation'], Math: ['Interest', 'Average & age'], GK: ['International organisations', 'Organisation GK'], Bangla: ['সমার্থক ও বিপরীত শব্দ', 'পারিভাষিক শব্দ'] },
+  { English: ['Synonyms & antonyms', 'Idioms & phrases', 'Phrasal verbs'], Math: ['Algebra & indices'], GK: ['World geography & countries', 'Environment & climate'], Bangla: ['সাহিত্য'] },
+  { English: ['Analogy', 'Spelling', 'Translation'], Math: ['Geometry & mensuration'], GK: ['ICT basics', 'Everyday science'], Bangla: ['সাহিত্য'] },
+  { English: ['English literature'], Math: ['Series & sets', 'Mental ability'], GK: ['International', 'World history & politics'], Bangla: ['সাহিত্য', 'শব্দ ও পদ', 'বাক্য ও যতিচিহ্ন'] },
+  { English: [], Math: [], GK: [], Bangla: [] },
+  { English: [], Math: [], GK: [], Bangla: [] },
+  { English: [], Math: [], GK: [], Bangla: [] },
+  { English: [], Math: [], GK: [], Bangla: [] },
+];
+
 const DEFAULT_EXAMS = [
   { id: 'mod', name: 'Ministry of Defence – AD (non-technical)', date: '', status: 'Applied' },
   { id: 'bepza', name: 'BEPZA – AD (Admin)', date: '', status: 'Applied' },

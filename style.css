@@ -100,6 +100,11 @@ a { color: var(--accent); }
 .check input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
 .check.done .label { text-decoration: line-through; color: var(--muted); }
 .check .mins { margin-left: auto; color: var(--muted); font-size: .85rem; white-space: nowrap; }
+.subjtest { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  padding: 0 0 12px 34px; margin-top: -4px; border-bottom: 1px solid var(--line); }
+.subjtest button { padding: 6px 12px; }
+.check:has(+ .subjtest) { border-bottom: 0; }
+.subjtest:last-child { border-bottom: 0; }
 
 .progress { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
 .progress > i { display: block; height: 100%; background: var(--accent); }

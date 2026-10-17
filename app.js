@@ -86,6 +86,19 @@ function streak() {
   return n;
 }
 
+// After a subject session is ticked on a study day: offer its 30-MCQ test, or show today's score.
+function subjTestRow(x, checks, week) {
+  const subj = SESSION_SUBJECT[x.id];
+  if (!subj || !checks[x.id] || sessionsFor().list !== DAILY) return '';
+  const mode = subjTestMode(subj, Math.max(1, week));
+  const done = S.attempts.filter(t => t.mode === mode && t.date === TODAY).pop();
+  if (done) { const sc = score(done);
+    return `<div class="subjtest small"><a href="#practice/r-${esc(done.id)}">30-MCQ test: ${sc.marks} / ${sc.total}</a>
+      <button data-action="p-subj30" data-v="${esc(subj)}">Retake</button></div>`; }
+  return `<div class="subjtest small"><span class="muted">${esc(subj)} done. Check yourself:</span>
+    <button class="primary" data-action="p-subj30" data-v="${esc(subj)}">30-MCQ test</button></div>`;
+}
+
 // ---------- views ----------
 const views = {};
 
@@ -120,7 +133,7 @@ views.today = () => {
       <div class="progress" style="margin:6px 0 4px"><i style="width:${total ? done / total * 100 : 0}%"></i></div>
       ${s.list.map(x => `<label class="check ${checks[x.id] ? 'done' : ''}">
         <input type="checkbox" data-action="check" data-id="${x.id}" ${checks[x.id] ? 'checked' : ''}>
-        <span class="label">${esc(x.label)}</span><span class="mins">${x.mins}m</span></label>`).join('')}
+        <span class="label">${esc(x.label)}</span><span class="mins">${x.mins}m</span></label>${subjTestRow(x, checks, week)}`).join('')}
     </div>`;
   } else if (s.kind === 'Exam day') {
     html += `<div class="card accent"><h3>Exam day</h3><p>${esc(s.note)}</p></div>`;
