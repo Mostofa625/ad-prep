@@ -9,6 +9,9 @@ const QUICK_N = 20;
 const QBY = Object.fromEntries(QUESTIONS.map(q => [q.id, q]));
 const QSUBJECTS = MOCK_MIX.map(m => m[0]);
 const LETTERS = ['ক', 'খ', 'গ', 'ঘ'];
+// Questions found in 3+ different guide books (r = number of books).
+const REPEATED = QUESTIONS.filter(q => (q.r || 0) >= 3);
+const REP_N = 30;
 
 let pf = { s: 'All', t: '' }; // quick-quiz filter
 let ptick = null;
@@ -131,6 +134,11 @@ function practiceHome() {
       <button class="primary" data-action="p-mock">Start full mock</button>
     </div>
 
+    <div class="card"><h3>Most repeated: ${REP_N} questions</h3>
+      <p class="small">${REPEATED.length} questions appear in 3 or more of the 79 guide books, so they are the likeliest to come again. Most-repeated first; uses the subject chosen below.</p>
+      <button class="primary" data-action="p-rep">Start most-repeated quiz</button>
+    </div>
+
     <div class="card"><h3>Quick quiz: ${QUICK_N} questions</h3>
       <div class="chips" style="margin-top:8px">${['All', ...QSUBJECTS].map(s =>
         `<button class="chip ${pf.s === s ? 'on' : ''}" data-action="p-subj" data-v="${esc(s)}">${esc(s.split(' /')[0])}</button>`).join('')}</div>
@@ -204,7 +212,7 @@ function resultView(rid) {
   const wrongIds = t.ids.filter(id => t.ans[id] !== undefined && t.ans[id] !== QBY[id]?.a);
   const skipIds = t.ids.filter(id => t.ans[id] === undefined);
   const qcard = (id, cls) => { const q = QBY[id]; if (!q) return ''; const mine = t.ans[id];
-    return `<div class="card ${cls}"><span class="tag">${esc(q.s.split(' /')[0])} · ${esc(q.t)}</span>
+    return `<div class="card ${cls}"><span class="tag">${esc(q.s.split(' /')[0])} · ${esc(q.t)}</span>${q.r >= 3 ? ` <span class="tag warn">in ${q.r} books</span>` : ''}
       <p style="margin-top:8px;white-space:pre-wrap">${esc(q.q)}</p>
       ${mine !== undefined ? `<p class="small">Your answer: ${letter(t, id, mine)}) ${esc(q.o[mine])}</p>` : ''}
       <p class="small"><b>Correct: ${letter(t, id, q.a)}) ${esc(q.o[q.a])}</b></p>
@@ -292,6 +300,13 @@ const PRACTICE = {
       startTest('Retry wrong', shuffle(ids), Math.max(5, Math.ceil(ids.length * 0.6)));
     },
     'p-neg'(el) { S.neg = +el.value; save(); render(); },
+    'p-rep'() {
+      if (S.test && !confirm('Discard the test in progress?')) return;
+      const pool = REPEATED.filter(q => pf.s === 'All' || q.s === pf.s);
+      if (!pool.length) return toast('No repeated questions for that subject yet');
+      const n = Math.min(REP_N, pool.length);
+      startTest(pf.s === 'All' ? 'Most repeated' : 'Most repeated: ' + pf.s, pick(pool, n).map(q => q.id), Math.ceil(n * 0.6));
+    },
     'p-subj30'(el) {
       if (S.test && !confirm('Discard the test in progress?')) return;
       const subj = el.dataset.v, week = Math.max(1, planDay().week);
