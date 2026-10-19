@@ -52,7 +52,7 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; outline: none; }
 
 .tabs {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-  display: grid; grid-template-columns: repeat(6, 1fr);
+  display: grid; grid-template-columns: repeat(7, 1fr);
   background: var(--card);
   border-top: 1px solid var(--line);
   padding-bottom: env(safe-area-inset-bottom);
@@ -60,7 +60,7 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; outline: none; }
 .tabs a {
   height: var(--tabs-h);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 2px; font-size: .7rem; color: var(--muted); text-decoration: none;
+  gap: 2px; font-size: .66rem; color: var(--muted); text-decoration: none;
 }
 .tabs a span { font-size: 1.2rem; line-height: 1; }
 .tabs a.active { color: var(--accent); font-weight: 600; }

@@ -143,7 +143,8 @@ views.today = () => {
     const t = WEEKS[week - 1];
     html += `<div class="card"><h3>This week's topics</h3><ul class="plain small">
       <li><b>English:</b> ${esc(t[0])}</li><li><b>Math:</b> ${esc(t[1])}</li>
-      <li><b>GK:</b> ${esc(t[2])}</li><li><b>Bangla:</b> ${esc(t[3])}</li></ul></div>`;
+      <li><b>GK:</b> ${esc(t[2])}</li><li><b>Bangla:</b> ${esc(t[3])}</li></ul>
+      ${notesFor('Bangla', WEEK_TOPICS[Math.min(week, WEEK_TOPICS.length) - 1].Bangla).map(n => `<a class="btn" href="#study/${esc(n.id)}" style="margin:6px 6px 0 0">Note: ${esc(n.title)}</a>`).join('')}</div>`;
   }
 
   if (s.list.some(x => x.id === 'mock')) {
@@ -417,8 +418,8 @@ const actions = {
     S = blank(); save(); render(); toast('Erased');
   },
 };
-Object.assign(views, PRACTICE.views);
-Object.assign(actions, PRACTICE.actions);
+Object.assign(views, PRACTICE.views, STUDY.views);
+Object.assign(actions, PRACTICE.actions, STUDY.actions);
 
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-action]');
