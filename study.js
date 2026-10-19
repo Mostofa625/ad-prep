@@ -17,7 +17,7 @@ function studyHome() {
     html += `<h2>${esc(subj)}</h2>`;
     if (!list.length) { html += '<p class="muted small">Notes coming soon.</p>'; continue; }
     html += list.map(n => `<a class="card row between" href="#study/${esc(n.id)}" style="text-decoration:none;color:inherit">
-      <span class="grow"><b>${esc(n.title)}</b><br><span class="muted small">${n.mins} min read${n.weight ? ` · ${n.weight.asked} past questions` : ''}</span></span>
+      <span class="grow"><b>${esc(n.title)}</b><br><span class="muted small">${n.mins} min read${n.weight?.asked != null ? ` · ${n.weight.asked} past questions` : ''}</span></span>
       ${n.weight?.priority === 'High' ? '<span class="tag warn">focus</span>' : ''}
       ${read[n.id] ? '<span class="tag">read</span>' : ''}</a>`).join('');
   }
@@ -34,9 +34,9 @@ function noteViewV2(n) {
   const max = Math.max(1, ...((w.parts || []).map(p => p[1])));
   const pri = { High: 'warn', Medium: '', Low: '' }[w.priority] ?? '';
   let html = `<a class="muted small" href="#study">← All notes</a>`;
-  if (w.asked != null) {
-    html += `<div class="card wt"><div class="row between"><b>How much is asked</b><span class="tag ${pri}">${esc(w.priority || '')} priority</span></div>
-      <p class="wtnum"><span>${w.asked}</span> of ${w.of} questions <span class="muted">(${w.share}%) · ${esc(w.label)}</span></p>
+  if (w.asked != null || w.why) {
+    html += `<div class="card wt"><div class="row between"><b>How much is asked</b>${w.priority ? `<span class="tag ${pri}">${esc(w.priority)} priority</span>` : ''}</div>
+      ${w.asked != null ? `<p class="wtnum"><span>${w.asked}</span> of ${w.of} questions <span class="muted">(${w.share}%) · ${esc(w.label)}</span></p>` : (w.label ? `<p class="muted small" style="margin:4px 0">${esc(w.label)}</p>` : '')}
       ${w.parts?.length ? `<div class="bars">${w.parts.map(([name, c]) => `<div class="bar"><span class="bl">${esc(name)}</span><span class="bt"><i style="width:${Math.max(4, c / max * 100)}%"></i></span><span class="bn">${c}</span></div>`).join('')}</div>` : ''}
       ${w.why ? `<p class="small" style="margin:8px 0 0">${rich(w.why)}</p>` : ''}</div>`;
   }
