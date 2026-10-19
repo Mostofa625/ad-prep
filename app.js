@@ -144,7 +144,7 @@ views.today = () => {
     html += `<div class="card"><h3>This week's topics</h3><ul class="plain small">
       <li><b>English:</b> ${esc(t[0])}</li><li><b>Math:</b> ${esc(t[1])}</li>
       <li><b>GK:</b> ${esc(t[2])}</li><li><b>Bangla:</b> ${esc(t[3])}</li></ul>
-      ${notesFor('Bangla', WEEK_TOPICS[Math.min(week, WEEK_TOPICS.length) - 1].Bangla).map(n => `<a class="btn" href="#study/${esc(n.id)}" style="margin:6px 6px 0 0">Note: ${esc(n.title)}</a>`).join('')}</div>`;
+      ${['English', 'Bangla'].flatMap(sub => notesFor(sub, WEEK_TOPICS[Math.min(week, WEEK_TOPICS.length) - 1][sub])).map(n => `<a class="btn" href="#study/${esc(n.id)}" style="margin:6px 6px 0 0">Note: ${esc(n.title)}</a>`).join('')}</div>`;
   }
 
   if (s.list.some(x => x.id === 'mock')) {
