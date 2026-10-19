@@ -7,6 +7,7 @@ NOTES.push(
         'Kinds: common (girl), proper (Dhaka), collective (team), material (gold), abstract (**discipline**, honesty).',
         '**Uncountable (no plural, no "a"):** salt, furniture, information, advice, luggage, equipment, knowledge, evidence, news, mathematics.',
         '**Irregular plurals:** hypothesis → **hypotheses**, louse → **lice**, ox → **oxen**, deer → **deer**, criterion → criteria, phenomenon → phenomena, datum → data, basis → bases, crisis → crises, medium → media, cactus → cacti. "Brethren" is the plural of brother in a religious or club sense.',
+        '**Reflexive pronouns** end in -self/-selves: himself, herself, myself, themselves. **Compound nouns:** headmaster, mother-in-law, bus-stop. mouse → **mice**; it → they. Uncountable nouns lose the plural: "much time", not "much times".',
         '**Gender pairs:** ox–cow, mare–**stallion**, lion–lioness, nephew–niece, bachelor–spinster, widower–widow, host–hostess.',
       ]},
       { h: 'Adjectives and degrees', list: [
@@ -83,6 +84,7 @@ NOTES.push(
       ]},
       { h: 'Confusing verb forms', list: [
         'lie – lay – lain (rest); lay – laid – laid (put); rise – rose – risen; raise – raised – raised (needs object); sit/set.',
+        '**wring** – wrung – wrung.  "He ran fast **lest** he **should** miss the train."  "He advised me **to give up** smoking."  "Fear made the thief **run** away" (make + object + base verb).  "**As** the sun **was shining**, I decided to go out."',
         'The past participle of "see" is seen, "go" is gone, "write" is written, "begin" is begun, "swim" is swum.',
       ]},
     ],
@@ -109,6 +111,7 @@ NOTES.push(
         '**on** a day or date (on Friday, on 21 February), **in** a month/year/season, **at** a clock time or point.',
         '**In time** = early enough; **on time** = exactly punctual.',
         '"Do you have any money **on** you?" — money carried with you.',
+        '**besides** = in addition to; **prides herself on/upon** her beauty; slept **till** eight o\'clock; everything **hinges on/upon** what happens next; "I left the book **with** him."',
       ]},
       { h: 'Verb + preposition patterns', list: [
         '"He insisted **on my going** to the party." (insist on + possessive + -ing)',
@@ -132,12 +135,14 @@ NOTES.push(
         'Simple present: is/am/are + pp. Simple past: was/were + pp. Future: will be + pp. Present perfect: has/have been + pp. Present continuous: is/am/are being + pp.',
         '"I know him" → "He **is known to me**." (know takes "to" in the passive).',
         '**Wh- questions** often use "By whom": "Who is calling me?" → "**By whom am I being called?**" "Who wrote this letter?" → "By whom **was** this letter written?" "Who will do the work?" → "By whom **will** the work **be done**?" "Who has done the work?" → "By whom **has** the work **been done**?"',
-        '**Imperatives:** "Close the door." → "Let the door be closed."',
+        '**Imperatives:** "Close the door." → "Let the door be closed." Reverse: "Let it be done" → "Do it."',
+        'More Wh- examples: "Who taught you French?" → "By whom were you taught French?"; "Whom did she accuse?" → "**Who** was accused by her?"; "His behaviour surprised me" → "I was surprised **at** his behaviour."',
       ]},
       { h: 'Direct → indirect speech', list: [
         'If the reporting verb is in the past, move the tense back: am/is → was; do → did; will → would; can → could; has → had.',
         '**Questions:** "said to" becomes **asked**; no question mark; use the statement order. "She said to me, \'Where do you live?\'" → "She asked me **where I lived**."',
         '**Yes/no questions** use **if/whether**: "She said to me, \'Do you know the way?\'" → "She asked me **if I knew** the way."',
+        'More examples: "How long have you been living here?" → asked me how long I **had been living** there; "Why have you beaten my dog?" → asked me why I **had beaten** his dog.',
         '**Commands:** "said to" becomes ordered/told/asked + to-infinitive. **Exclamations:** exclaimed with joy/sorrow that…',
         '**Time and place words change:** now → then; today → that day; tomorrow → the next day; yesterday → the day before; here → there; this → that.',
         '**Universal truths and habits** stay in the present: "He said that the sun **rises** in the east."',
@@ -165,6 +170,7 @@ NOTES.push(
         '**Since** (from the time): "They suffered much **since** the tornado had hit their village."',
         '**If** for conditions that are always true: "Water boils **if** you heat it to 100°C."',
         '**Unless** = if not: "Unless you hurry, you will miss the train."',
+        '**Imperative:** "Do not lie."  **Negative question:** "He is a great scholar" → "Is he not a great scholar?"  **Adverbial phrase:** "with all sincerity".',
         '**Would you mind closing the door?** (mind + -ing)  **I prefer walking to riding.**',
         '"They have **yet to** make a decision" = they have **not** made a decision yet.',
         '**Question tags:** positive sentence → negative tag ("He came, didn\'t he?"); negative sentence → positive tag.',
@@ -183,8 +189,9 @@ NOTES.push(
     sections: [
       { h: 'Forms you must know', list: [
         '**Noun forms:** beautiful → **beauty**; laugh → **laughter**; brief → **brevity**; wise → wisdom; free → freedom; strong → strength; long → length.',
-        '**Verb forms:** global → **globalise**; able → **enable**; antagonism → **antagonize**; strong → strengthen; short → shorten; simple → simplify.',
-        '**Adjective forms:** statue → **statuesque**; heart → **hearty**; nation → national; courage → courageous; danger → dangerous; envy → envious.',
+        '**Verb forms:** new → **renew**; global → **globalise**; able → **enable**; antagonism → **antagonize**; strong → strengthen; short → shorten; simple → simplify.',
+        '**Adjective forms:** might → **mighty**; statue → **statuesque**; heart → **hearty**; nation → national; courage → courageous; danger → dangerous; envy → envious.',
+        '**Other:** index → indices (maths); AD = Anno Domini; ecological = relating to the environment.',
         '**Opposites with prefixes:** amoral (no morals) ≠ immoral (against morals); un-, in-, im-, il-, ir-, dis-, mis-, non-.',
       ]},
       { h: 'Common suffixes', list: [
@@ -211,6 +218,8 @@ NOTES.push(
         '**candid** = frank     **diligent** = hard-working ↔ lazy     **frugal** = thrifty ↔ extravagant',
         '**ephemeral** = short-lived ↔ permanent     **verbose** = wordy ↔ concise     **obsolete** = outdated',
         '**zenith** = peak ↔ nadir     **meticulous** = careful     **pragmatic** = practical',
+        '**intrepid** = fearless     **proviso** = stipulation     **nuptial** = relating to marriage     **gesture** = body movement',
+        '**supercilious** = arrogant ↔ **affable**     **contraction** ↔ **expansion**     **philanthropy** = love for mankind     **bleating** = a goat\'s sound',
       ]},
       { h: 'One-word substitutions', list: [
         'A person who writes about his own life writes an **autobiography**.',
@@ -243,6 +252,8 @@ NOTES.push(
         '**once in a blue moon** = very rarely     **a piece of cake** = very easy     **spill the beans** = reveal a secret',
         '**under the weather** = unwell     **hit the nail on the head** = say exactly the right thing     **let the cat out of the bag** = reveal a secret by mistake',
         '**a red-letter day** = a memorable day     **a bolt from the blue** = a sudden shock     **at sixes and sevens** = in confusion',
+        '**all in** = very tired     **head in the clouds** = a day-dreamer     **tooth and nail** = with utmost effort     **bull market** = share prices rising',
+        '**status quo** = the existing state of affairs     **lingua franca** = a common language',
         '**by and large** = mostly     **cry wolf** = raise a false alarm     **turn a deaf ear** = refuse to listen     **kick the bucket** = die',
       ]},
     ],
@@ -356,6 +367,7 @@ NOTES.push(
         '**Shakespeare:** Hamlet, Macbeth, Othello, King Lear (tragedies). **George Bernard Shaw:** often called the greatest modern English dramatist after Shakespeare.',
         '**Jonathan Swift:** greatest satirist in English literature; *Gulliver\'s Travels*.  **Daniel Defoe:** *Robinson Crusoe*.',
         '**Charles Dickens:** Oliver Twist, David Copperfield, A Tale of Two Cities.  **Thomas Hardy:** Tess of the d\'Urbervilles.  **George Orwell:** Animal Farm, 1984.',
+        '**Ben Jonson:** *Volpone*; "Comedy of Humours".  **William Blake:** both poet and painter.  **Emily Brontë:** *Wuthering Heights* (Heathcliff).  **Robert Browning:** Victorian poet.  **Samuel Johnson:** compiled the first notable English dictionary (1755).  The Victorian period is the 19th century; *A Tale of Two Cities* is set in the French Revolution.',
         '**Francis Bacon:** father of the English essay.  **Charles Darwin:** *On the Origin of Species*.',
         '**O. Henry** is the pen-name of **William Sydney Porter** (American short-story writer).  **Alexandre Dumas:** *The Three Musketeers* (French).',
         '**Nelson Mandela:** *Long Walk to Freedom* (autobiography).',

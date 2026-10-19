@@ -8,7 +8,7 @@ function notesFor(subj, topics) { return NOTES.filter(n => n.s === subj && topic
 
 function studyHome() {
   setHeader('Study', 'Short notes, then practice');
-  const subjects = ['Bangla', 'English', 'GK', 'Math'];
+  const subjects = ['Bangla', 'English', 'ICT / Mental ability', 'GK', 'Math'];
   const read = S.read || {};
   let html = '<p class="muted small">One note is about a phone screen. Read it, then take the 20-question practice on that topic.</p>';
   for (const subj of subjects) {
