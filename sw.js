@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file below changes so phones pick up the update.
-const VERSION = 'v40';
+const VERSION = 'v42';
 const FILES = ['./', 'index.html', 'style.css', 'data.js', 'questions.js', 'patterns.js', 'practice.js', 'notes.js', 'notes-bg.js', 'notes-en.js', 'notes-lit.js', 'notes-ict.js', 'study.js', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
