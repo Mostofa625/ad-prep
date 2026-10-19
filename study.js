@@ -2,7 +2,8 @@
 // Loaded after practice.js (uses startTest/pick) and before app.js, which merges STUDY.views/actions.
 const NOTE_BY_ID = Object.fromEntries(NOTES.map(n => [n.id, n]));
 const NOTE_Q = 20;
-const rich = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const rich = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/==(.+?)==/g, '<mark>$1</mark>');
+const stars = n => '★'.repeat(n) + '☆'.repeat(Math.max(0, 3 - n));
 
 function notesFor(subj, topics) { return NOTES.filter(n => n.s === subj && topics.includes(n.t)); }
 
@@ -16,9 +17,45 @@ function studyHome() {
     html += `<h2>${esc(subj)}</h2>`;
     if (!list.length) { html += '<p class="muted small">Notes coming soon.</p>'; continue; }
     html += list.map(n => `<a class="card row between" href="#study/${esc(n.id)}" style="text-decoration:none;color:inherit">
-      <span class="grow"><b>${esc(n.title)}</b><br><span class="muted small">${n.mins} min read</span></span>
+      <span class="grow"><b>${esc(n.title)}</b><br><span class="muted small">${n.mins} min read${n.weight ? ` · ${n.weight.asked} past questions` : ''}</span></span>
+      ${n.weight?.priority === 'High' ? '<span class="tag warn">focus</span>' : ''}
       ${read[n.id] ? '<span class="tag">read</span>' : ''}</a>`).join('');
   }
+  return html;
+}
+
+
+// v2 notes: weight, focus, typed parts with tables, memory tricks and a revision grid.
+function noteViewV2(n) {
+  setHeader(n.title, `${n.s} · ${n.mins} min`);
+  const read = !!(S.read || {})[n.id];
+  const count = QUESTIONS.filter(q => q.s === n.s && q.t === n.t).length;
+  const w = n.weight || {};
+  const max = Math.max(1, ...((w.parts || []).map(p => p[1])));
+  const pri = { High: 'warn', Medium: '', Low: '' }[w.priority] ?? '';
+  let html = `<a class="muted small" href="#study">← All notes</a>`;
+  if (w.asked != null) {
+    html += `<div class="card wt"><div class="row between"><b>How much is asked</b><span class="tag ${pri}">${esc(w.priority || '')} priority</span></div>
+      <p class="wtnum"><span>${w.asked}</span> of ${w.of} questions <span class="muted">(${w.share}%) · ${esc(w.label)}</span></p>
+      ${w.parts?.length ? `<div class="bars">${w.parts.map(([name, c]) => `<div class="bar"><span class="bl">${esc(name)}</span><span class="bt"><i style="width:${Math.max(4, c / max * 100)}%"></i></span><span class="bn">${c}</span></div>`).join('')}</div>` : ''}
+      ${w.why ? `<p class="small" style="margin:8px 0 0">${rich(w.why)}</p>` : ''}</div>`;
+  }
+  if (n.focus?.length) html += `<div class="card focus"><h3>🎯 Where to focus</h3><ol class="small">${n.focus.map(x => `<li>${rich(x)}</li>`).join('')}</ol></div>`;
+  for (const p of n.parts || []) {
+    html += `<div class="card part"><div class="row between"><h3 class="grow">${esc(p.h)}</h3>${p.asked != null ? `<span class="tag">asked ${p.asked}×</span>` : ''}${p.stars ? `<span class="stars" title="importance">${stars(p.stars)}</span>` : ''}</div>`;
+    if (p.intro) html += `<p class="small">${rich(p.intro)}</p>`;
+    if (p.table) html += `<div class="tblwrap"><table class="nt${p.table[0].length >= 3 ? ' stack' : ''}"><thead><tr>${p.table[0].map(c => `<th>${rich(c)}</th>`).join('')}</tr></thead><tbody>${p.table.slice(1).map(r => `<tr>${r.map((c, i) => `<td data-l="${i ? esc(p.table[0][i]) : ''}">${rich(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    if (p.points?.length) html += `<ul class="pts small">${p.points.map(x => `<li>${rich(x)}</li>`).join('')}</ul>`;
+    if (p.examples?.length) html += `<div class="exs small">${p.examples.map(([a, b]) => `<div class="ex"><span class="ok">✔</span> ${rich(a)}${b ? `<span class="muted"> — ${rich(b)}</span>` : ''}</div>`).join('')}</div>`;
+    if (p.wrong?.length) html += `<div class="exs small">${p.wrong.map(([a, b]) => `<div class="ex"><span class="bad">✘</span> <s>${rich(a)}</s> → ${rich(b)}</div>`).join('')}</div>`;
+    if (p.memo) html += `<div class="memo small">💡 ${rich(p.memo)}</div>`;
+    if (p.traps?.length) html += `<div class="trap small"><b>Watch out</b><ul>${p.traps.map(x => `<li>${rich(x)}</li>`).join('')}</ul></div>`;
+    html += `</div>`;
+  }
+  if (n.revise?.length) html += `<div class="card"><h3>⚡ One-minute revision</h3><div class="rev">${n.revise.map(([a, b]) => `<div><b>${rich(a)}</b><span>${rich(b)}</span></div>`).join('')}</div></div>`;
+  html += `<div class="row" style="gap:8px;margin-top:8px">
+      <button class="primary grow" data-action="st-quiz" data-id="${esc(n.id)}">Practice ${Math.min(NOTE_Q, count)} questions</button>
+      <button data-action="st-read" data-id="${esc(n.id)}">${read ? 'Mark unread' : 'Mark read'}</button></div>`;
   return html;
 }
 
@@ -40,7 +77,7 @@ const STUDY = {
   views: {
     study(sub) {
       const n = NOTE_BY_ID[sub];
-      return n ? noteView(n) : studyHome();
+      return n ? (n.v === 2 ? noteViewV2(n) : noteView(n)) : studyHome();
     },
   },
   actions: {
