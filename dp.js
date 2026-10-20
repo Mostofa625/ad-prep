@@ -42,7 +42,8 @@ function dpHub() {
       <a class="dp-tile" href="#dp/guide"><b>☰ What to know</b><span>Test format, pace, tactics</span></a>
       <a class="dp-tile" href="#dp/mockintro"><b>◷ 50-Q timed mock</b><span>15 minutes, mixed, like CCAT</span></a>
       <a class="dp-tile" href="#dp/types"><b>✓ Practice by type</b><span>Verbal · Maths · Series · Spatial · Logic · Excel · Computer</span></a>
-      <a class="dp-tile" href="#dp/games"><b>● Number games</b><span>Bubbles, bigger or smaller</span></a>
+      <a class="dp-tile" href="#dp/agree"><b>☑ Agree scale</b><span>Work-style statements with repeats</span></a>
+      <a class="dp-tile" href="#dp/games"><b>● Number games</b><span>Bubbles, shapes, patterns, marble</span></a>
       <a class="dp-tile" href="#dp/typing"><b>⌨ Typing test</b><span>60 seconds, speed and accuracy</span></a>
       <a class="dp-tile" href="#dp/proof"><b>✎ Proofreading</b><span>${DP_PROOF.length} passages, tap the mistakes</span></a>
       <a class="dp-tile" href="#dp/fit"><b>⚖ Work-fit sets</b><span>Sort statements into 5 groups</span></a>
@@ -330,9 +331,75 @@ function dpFitCheck() {
   if (Object.keys(b.placed).length === b.mask.size) { g.ok++; g.board = dpFitBoard(); }
 }
 
+
+// ---------- Pattern recreation ----------
+const DP_TILES = [{ k: 'Y' }, { k: 'B' }, { k: 'D', a: 0 }, { k: 'D', a: 90 }, { k: 'D', a: 180 }, { k: 'D', a: 270 }];
+const dpTileStyle = t => t.k === 'Y' ? 'background:#f2c230' : t.k === 'B' ? 'background:#3b9be8' : `background:linear-gradient(${135 + t.a}deg,#f2c230 50%,#3b9be8 50%)`;
+function dpPatBoard(level) {
+  const n = level < 4 ? 2 : 3, target = Array.from({ length: n * n }, () => dpRnd(0, 5));
+  if (!target.some(x => x > 1)) target[dpRnd(0, n * n - 1)] = dpRnd(2, 5);
+  return { n, target, mine: Array(n * n).fill(-1) };
+}
+function dpPatView() {
+  const b = dpGame.board, grid = (arr, tap) => `<div class="dp-pat" style="grid-template-columns:repeat(${b.n},56px)">${arr.map((v, i) =>
+    `<button class="dp-tile2" ${tap ? `data-action="dp-pat" data-i="${i}"` : 'disabled'} style="${v < 0 ? 'background:#fff' : dpTileStyle(DP_TILES[v])}" aria-label="tile"></button>`).join('')}</div>`;
+  return `<div class="card"><p class="small muted" style="margin:0 0 8px">Recreate the pattern. Tap a square to cycle through: yellow, blue and the split tile in four rotations. Check the rotation!</p>
+    <div class="row" style="justify-content:space-around;align-items:flex-start"><div><div class="small muted" style="text-align:center">Target</div>${grid(b.target, false)}</div><div><div class="small muted" style="text-align:center">Yours</div>${grid(b.mine, true)}</div></div></div>
+    <div class="row"><button data-action="dp-pat-skip">Skip</button></div>`;
+}
+
+// ---------- Short Cuts (marble to the target in the fewest moves) ----------
+function dpMazeBoard(level) {
+  const n = 5 + Math.min(2, Math.floor(level / 3));
+  for (let t = 0; t < 200; t++) {
+    const walls = new Set(); const nw = dpRnd(Math.floor(n * 1.2), n * 2);
+    while (walls.size < nw) walls.add(dpRnd(0, n - 1) * 10 + dpRnd(0, n - 1));
+    const start = dpRnd(0, n - 1) * 10, goal = dpRnd(0, n - 1) * 10 + (n - 1);
+    walls.delete(start); walls.delete(goal);
+    const dist = new Map([[start, 0]]), q = [start];
+    while (q.length) { const k = q.shift(); for (const x of [k - 10, k + 10, k - 1, k + 1]) { const r = Math.floor(x / 10), c = x % 10; if (r < 0 || r >= n || c < 0 || c >= n || Math.abs(c - (k % 10)) > 1 || walls.has(x) || dist.has(x)) continue; dist.set(x, dist.get(k) + 1); q.push(x); } }
+    if (dist.has(goal) && dist.get(goal) >= n) return { n, walls, pos: start, goal, best: dist.get(goal), moves: 0 };
+  }
+  return null;
+}
+function dpMazeView() {
+  const b = dpGame.board, cells = [];
+  for (let r = 0; r < b.n; r++) for (let c = 0; c < b.n; c++) { const k = r * 10 + c;
+    cells.push(`<span class="dp-mz ${b.walls.has(k) ? 'wall' : ''} ${k === b.goal ? 'goal' : ''}">${k === b.pos ? '<i class="marble"></i>' : k === b.goal ? '★' : ''}</span>`); }
+  return `<div class="card"><p class="small muted" style="margin:0 0 8px">Move the blue marble to the star in as few steps as you can. Walls block you. Shortest possible: ${b.best} steps; yours so far: ${b.moves}.</p>
+    <div class="dp-fitgrid" style="grid-template-columns:repeat(${b.n},40px)">${cells.join('')}</div></div>
+    <div class="dp-pad"><button data-action="dp-mv" data-d="U">▲</button><div><button data-action="dp-mv" data-d="L">◀</button><button data-action="dp-mv" data-d="D">▼</button><button data-action="dp-mv" data-d="R">▶</button></div></div>
+    <div class="row" style="margin-top:8px"><button data-action="dp-maze-skip">Skip</button></div>`;
+}
+
+// ---------- Agree / disagree questionnaire (work style) ----------
+let dpAg = null;
+const DP_SCALE = ['Strongly disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly agree'];
+function dpAgreeView() {
+  if (!dpAg) dpAg = { order: dpShuffle(DP_AGREE.map((x, i) => i)), i: 0, ans: {} };
+  const a = dpAg;
+  if (a.i >= a.order.length) {
+    const byG = {}; a.order.forEach(k => (byG[DP_AGREE[k][1]] ||= []).push(a.ans[k]));
+    const pairs = Object.values(byG).filter(v => v.length === 2), same = pairs.filter(([x, y]) => x === y).length, close = pairs.filter(([x, y]) => Math.abs(x - y) <= 1).length;
+    const cnt = [0, 0, 0, 0, 0]; Object.values(a.ans).forEach(v => cnt[v]++);
+    const neu = Math.round(cnt[2] * 100 / a.order.length);
+    setHeader('Work-style questionnaire', 'Finished');
+    return `<div class="card ${close === pairs.length ? 'accent' : 'warn'}"><h3>Consistency: ${close} of ${pairs.length} repeated statements answered within one step (${same} identical)</h3>
+      <p class="small">Real tests repeat statements to see whether you answer the same way each time. Wide gaps between a statement and its repeat suggest rushing or guessing.</p>
+      <p class="small">Your answers: ${DP_SCALE.map((s, i) => `${s} ${cnt[i]}`).join(' · ')}. ${neu > 35 ? 'You chose Neutral a lot (' + neu + '%). Real tests prefer a clear lean; pick a side when you honestly lean one way.' : 'Good spread.'}</p></div>
+      <div class="row"><button class="primary" data-action="dp-agree-reset">Do it again</button><a class="btn" href="#dp">Back</a></div>`;
+  }
+  const k = a.order[a.i];
+  setHeader('Work-style questionnaire', `${a.i + 1} / ${a.order.length}`);
+  return `<div class="progress" style="margin-bottom:10px"><i style="width:${dpPct(a.i, a.order.length)}%"></i></div>
+    <div class="card"><p style="font-size:1.1rem;margin:4px 0 14px">${esc(DP_AGREE[k][0])}</p>
+    ${DP_SCALE.map((s, i) => `<button style="width:100%;justify-content:center;margin-bottom:8px" data-action="dp-agree" data-v="${i}">${s}</button>`).join('')}</div>
+    <p class="muted small">No right answers. Answer how you really are, and stay consistent. The real test has about 190 statements; this has ${DP_AGREE.length}, with repeats.</p>`;
+}
+
 function dpGameStart(type, secs) {
   clearInterval(dpGameTick);
-  dpGame = { type, end: Date.now() + secs * 1000, ok: 0, bad: 0, done: false, board: type === 'bubbles' ? dpBubbleBoard() : type === 'fit' ? dpFitBoard() : dpBigBoard() };
+  dpGame = { type, end: Date.now() + secs * 1000, ok: 0, bad: 0, done: false, board: type === 'bubbles' ? dpBubbleBoard() : type === 'fit' ? dpFitBoard() : type === 'pat' ? dpPatBoard(0) : type === 'maze' ? dpMazeBoard(0) : dpBigBoard() };
   dpGameTick = setInterval(() => {
     if (!dpGame || location.hash !== '#dp/game') { clearInterval(dpGameTick); return; }
     const left = Math.round((dpGame.end - Date.now()) / 1000), el = document.getElementById('dpgclock');
@@ -343,13 +410,15 @@ function dpGameStart(type, secs) {
 }
 function dpGameView() {
   const g = dpGame; if (!g) { location.hash = '#dp/games'; return ''; }
-  setHeader(g.type === 'bubbles' ? 'Number bubbles' : g.type === 'fit' ? 'Shape fit' : 'Bigger, equal or smaller', 'Speed and accuracy');
+  setHeader(g.type === 'bubbles' ? 'Number bubbles' : g.type === 'fit' ? 'Shape fit' : g.type === 'pat' ? 'Pattern recreation' : g.type === 'maze' ? 'Short cuts' : 'Bigger, equal or smaller', 'Speed and accuracy');
   const left = Math.max(0, Math.round((g.end - Date.now()) / 1000));
-  if (g.done) return `<div class="card accent"><h3>Score: ${g.ok - g.bad}</h3><p class="small">${g.ok} right · ${g.bad} wrong. ${g.type === 'fit' ? 'Score is puzzles solved.' : 'Wrong answers cost a point here, so only tap when you are fairly sure.'} (The real test's scoring is not published, so treat this as speed practice.)</p></div>
+  if (g.done) return `<div class="card accent"><h3>Score: ${g.ok - g.bad}</h3><p class="small">${g.ok} right · ${g.bad} wrong. ${g.type !== 'bubbles' && g.type !== 'big' ? 'Score is puzzles solved.' : 'Wrong answers cost a point here, so only tap when you are fairly sure.'} (The real test's scoring is not published, so treat this as speed practice.)</p></div>
     <div class="row"><button class="primary" data-action="dp-game" data-t="${g.type}">Play again</button><a class="btn" href="#dp/games">Back</a></div>`;
   const b = g.board;
-  const head = `<div class="row between" style="margin-bottom:8px"><span id="dpgclock" class="timer" style="font-size:1.4rem">${dpMmss(left)}</span><span class="tag">${g.type === 'fit' ? g.ok + ' solved' : g.ok + ' right · ' + g.bad + ' wrong'}</span></div>`;
+  const head = `<div class="row between" style="margin-bottom:8px"><span id="dpgclock" class="timer" style="font-size:1.4rem">${dpMmss(left)}</span><span class="tag">${g.type !== 'bubbles' && g.type !== 'big' ? g.ok + ' solved' : g.ok + ' right · ' + g.bad + ' wrong'}</span></div>`;
   if (g.type === 'fit') return head + dpFitView();
+  if (g.type === 'pat') return head + dpPatView();
+  if (g.type === 'maze') return head + dpMazeView();
   if (g.type === 'bubbles') return head + `<div class="card"><p class="small muted" style="margin:0">Tap every bubble whose answer equals the target, then press Pop.</p>
     <p style="text-align:center;font-size:2rem;margin:10px 0"><b>Target: ${b.T}</b></p>
     <div class="dp-bubbles">${b.bubbles.map((x, i) => `<button class="dp-bub ${b.sel.has(i) ? 'on' : ''}" data-action="dp-bub" data-i="${i}">${esc(x.t)}</button>`).join('')}</div></div>
@@ -365,6 +434,8 @@ function dpGamesList() {
   return `<div class="card"><p class="small muted">Your friend's report says the real test has short timed games, including maths bubbles and a "which is bigger" task. These are my own practice versions, not the real thing.</p>
     <ul class="plain"><li><div class="row between"><b>Number bubbles</b><span class="tag">best ${b.best_bubbles ?? '–'}</span></div><span class="small muted">Pick every expression equal to the target.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="bubbles">Start (90 s)</button></div></li>
     <li><div class="row between"><b>Shape fit</b><span class="tag">best ${b.best_fit ?? '–'}</span></div><span class="small muted">Fill the grey shape with the pieces. Rotate them as needed.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="fit">Start (3 min)</button></div></li>
+    <li><div class="row between"><b>Pattern recreation</b><span class="tag">best ${b.best_pat ?? '–'}</span></div><span class="small muted">Rebuild the tile pattern. Mind the rotation.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="pat">Start (3 min)</button></div></li>
+    <li><div class="row between"><b>Short cuts</b><span class="tag">best ${b.best_maze ?? '–'}</span></div><span class="small muted">Move the marble to the star in the fewest steps.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="maze">Start (3 min)</button></div></li>
     <li><div class="row between"><b>Bigger, equal or smaller</b><span class="tag">best ${b.best_big ?? '–'}</span></div><span class="small muted">Compare two sums with multipliers.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="big">Start (90 s)</button></div></li></ul></div>
     <a class="btn" href="#dp">Back</a>`;
 }
@@ -380,6 +451,7 @@ const DPVIEWS = {
     if (sub === 'hist') return dpHist();
     if (sub === 'typing') return dpTypingView();
     if (sub === 'games') return dpGamesList();
+    if (sub === 'agree') return dpAgreeView();
     if (sub === 'game') return dpGameView();
     if (sub === 'proof') return dpProofList();
     if (sub === 'fit') return dpFitList();
@@ -430,7 +502,7 @@ const DPACT = {
     if (el.value) f[el.dataset.k] = +el.value; else delete f[el.dataset.k];
     save(); render();
   },
-  'dp-game'(el) { dpGameStart(el.dataset.t, el.dataset.t === 'fit' ? 180 : 90); },
+  'dp-game'(el) { dpGameStart(el.dataset.t, ['fit', 'pat', 'maze'].includes(el.dataset.t) ? 180 : 90); },
   'dp-piece'(el) { const b = dpGame?.board; if (!b) return; const i = +el.dataset.i; b.sel = b.sel === i ? null : i; render(); },
   'dp-rotate'() { const b = dpGame?.board; if (!b || b.sel === null) return; const p = b.pieces[b.sel]; p.cells = dpRot(p.cells); render(); },
   'dp-cell'(el) {
@@ -448,6 +520,15 @@ const DPACT = {
     dpFitCheck(); render();
   },
   'dp-fit-reset2'() { const b = dpGame?.board; if (!b) return; b.placed = {}; b.pieces.forEach(p => p.placed = false); b.sel = null; render(); },
+  'dp-pat'(el) { const g = dpGame; if (!g || g.done) return; const b = g.board, i = +el.dataset.i; b.mine[i] = (b.mine[i] + 1) % 6;
+    if (b.mine.every((v, k) => v === b.target[k])) { g.ok++; g.board = dpPatBoard(g.ok); } render(); },
+  'dp-pat-skip'() { if (dpGame) { dpGame.board = dpPatBoard(dpGame.ok); render(); } },
+  'dp-mv'(el) { const g = dpGame; if (!g || g.done) return; const b = g.board, k = b.pos, x = { U: k - 10, D: k + 10, L: k - 1, R: k + 1 }[el.dataset.d];
+    const r = Math.floor(x / 10), c = x % 10; if (r < 0 || r >= b.n || c < 0 || c >= b.n || Math.abs(c - (k % 10)) > 1 || b.walls.has(x)) return;
+    b.pos = x; b.moves++; if (x === b.goal) { g.ok++; g.board = dpMazeBoard(g.ok); } render(); },
+  'dp-maze-skip'() { if (dpGame) { dpGame.board = dpMazeBoard(dpGame.ok); render(); } },
+  'dp-agree'(el) { const a = dpAg; if (!a) return; a.ans[a.order[a.i]] = +el.dataset.v; a.i++; render(); },
+  'dp-agree-reset'() { dpAg = null; render(); },
   'dp-fit-skip'() { if (!dpGame) return; dpGame.board = dpFitBoard(); render(); },
   'dp-bub'(el) { const b = dpGame?.board; if (!b || dpGame.done) return; const i = +el.dataset.i; b.sel.has(i) ? b.sel.delete(i) : b.sel.add(i); render(); },
   'dp-pop'() {
