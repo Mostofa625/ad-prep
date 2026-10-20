@@ -31,6 +31,11 @@ const DP_GUIDE = [
     "Computer literacy (like the CLIK test): everyday computer and internet tasks. Practise the 'Computer literacy' type.",
     "Mechanical aptitude is for technical roles; unlikely for payroll.",
     "Your invitation does not say which of these you get. The practice questions shown before the real test will tell you; take them seriously." ] },
+  { h: 'What a candidate reported about the real format', items: [
+    "A friend who sat DP World's assessment described two parts. Part 1: six short timed tasks: a shape-fitting puzzle, a maths 'bubbles' task, proofreading (spot spelling, punctuation and grammar errors), a pattern-recreation task with rotation, a 'short cuts' problem-solving task, and a 'which is bigger' comparison. Part 2: about 190 statements about work attitudes and ethics, answered on a five-point agree/disagree scale, with some statements repeated.",
+    "This means the test is game-style, not just a CCAT-style paper. Each task has a short tutorial first, so read the tutorials carefully: they are untimed and show the controls.",
+    "Part 2: answer honestly and consistently. The repeated statements are there to check that you give the same answer each time. Do not choose 'neutral' for everything; pick the side you really lean toward.",
+    "Use the Number games tab for the maths tasks, Proofreading for Proof It, and the work-fit sets to practise honest sorting. I cannot reproduce the real tasks, only the skills." ] },
   { h: 'The three question families in the 15-minute part', items: [
     "Verbal: synonyms, antonyms, analogies, odd-one-out, sentence completion, spelling, and short logic statements (all/some/none).",
     "Maths and logic: percentages, ratios, averages, speed, work-and-time, fractions, and number series. Everything is mental arithmetic; for you, payroll-style sums (basic %, per-day pay, overtime) are an advantage.",

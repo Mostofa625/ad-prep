@@ -42,6 +42,7 @@ function dpHub() {
       <a class="dp-tile" href="#dp/guide"><b>☰ What to know</b><span>Test format, pace, tactics</span></a>
       <a class="dp-tile" href="#dp/mockintro"><b>◷ 50-Q timed mock</b><span>15 minutes, mixed, like CCAT</span></a>
       <a class="dp-tile" href="#dp/types"><b>✓ Practice by type</b><span>Verbal · Maths · Series · Spatial · Logic · Excel · Computer</span></a>
+      <a class="dp-tile" href="#dp/games"><b>● Number games</b><span>Bubbles, bigger or smaller</span></a>
       <a class="dp-tile" href="#dp/typing"><b>⌨ Typing test</b><span>60 seconds, speed and accuracy</span></a>
       <a class="dp-tile" href="#dp/proof"><b>✎ Proofreading</b><span>${DP_PROOF.length} passages, tap the mistakes</span></a>
       <a class="dp-tile" href="#dp/fit"><b>⚖ Work-fit sets</b><span>Sort statements into 5 groups</span></a>
@@ -241,6 +242,73 @@ function dpTypingFinish() {
     <p class="small muted">Words per minute counts only correct characters (5 per word). Accuracy matters as much as speed: aim for 95%+. Tap New passage to try again.</p></div>`;
 }
 
+
+// ---------- Number games (Numbubbles-style and "which is bigger") ----------
+let dpGame = null, dpGameTick = null;
+const dpRnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+function dpBubbleBoard() {
+  const T = dpRnd(12, 60), eq = new Set(), out = [];
+  const make = ok => {
+    for (let n = 0; n < 40; n++) {
+      const op = ['+', '-', '×', '÷'][dpRnd(0, 3)]; let a, b;
+      const goal = ok ? T : T + (dpRnd(0, 1) ? 1 : -1) * dpRnd(1, 9);
+      if (goal < 2) continue;
+      if (op === '+') { a = dpRnd(1, goal - 1); b = goal - a; }
+      else if (op === '-') { b = dpRnd(1, 30); a = goal + b; }
+      else if (op === '×') { const ds = []; for (let i = 2; i < goal; i++) if (goal % i === 0) ds.push(i); if (!ds.length) continue; a = ds[dpRnd(0, ds.length - 1)]; b = goal / a; }
+      else { b = dpRnd(2, 6); a = goal * b; }
+      const t = `${a} ${op} ${b}`; if (!out.some(x => x.t === t)) return { t, ok };
+    }
+    return null;
+  };
+  const nOk = dpRnd(3, 4);
+  for (let i = 0; i < 8; i++) { const x = make(i < nOk); if (x) out.push(x); }
+  return { T, bubbles: dpShuffle(out), sel: new Set() };
+}
+function dpBigBoard() {
+  const side = () => ({ tok: Array.from({ length: dpRnd(2, 3) }, () => dpRnd(1, 9)), m: dpRnd(1, 3) });
+  let L = side(), R = side();
+  const val = s => s.tok.reduce((a, b) => a + b, 0) * s.m;
+  if (Math.random() < 0.25) for (let n = 0; n < 200 && val(L) !== val(R); n++) R = side();
+  return { L, R, lv: val(L), rv: val(R) };
+}
+function dpGameStart(type, secs) {
+  clearInterval(dpGameTick);
+  dpGame = { type, end: Date.now() + secs * 1000, ok: 0, bad: 0, done: false, board: type === 'bubbles' ? dpBubbleBoard() : dpBigBoard() };
+  dpGameTick = setInterval(() => {
+    if (!dpGame || location.hash !== '#dp/game') { clearInterval(dpGameTick); return; }
+    const left = Math.round((dpGame.end - Date.now()) / 1000), el = document.getElementById('dpgclock');
+    if (el) el.textContent = dpMmss(left);
+    if (left <= 0) { dpGame.done = true; clearInterval(dpGameTick); const st = dpState(), k = 'best_' + dpGame.type; const sc = dpGame.ok - dpGame.bad; st.games = st.games || {}; if (st.games[k] == null || sc > st.games[k]) st.games[k] = sc; save(); render(); }
+  }, 500);
+  location.hash = '#dp/game';
+}
+function dpGameView() {
+  const g = dpGame; if (!g) { location.hash = '#dp/games'; return ''; }
+  setHeader(g.type === 'bubbles' ? 'Number bubbles' : 'Bigger, equal or smaller', 'Speed and accuracy');
+  const left = Math.max(0, Math.round((g.end - Date.now()) / 1000));
+  if (g.done) return `<div class="card accent"><h3>Score: ${g.ok - g.bad}</h3><p class="small">${g.ok} right · ${g.bad} wrong. Wrong answers cost a point here, so only tap when you are fairly sure. (The real test's scoring is not published, so treat this as speed practice.)</p></div>
+    <div class="row"><button class="primary" data-action="dp-game" data-t="${g.type}">Play again</button><a class="btn" href="#dp/games">Back</a></div>`;
+  const b = g.board;
+  const head = `<div class="row between" style="margin-bottom:8px"><span id="dpgclock" class="timer" style="font-size:1.4rem">${dpMmss(left)}</span><span class="tag">${g.ok} right · ${g.bad} wrong</span></div>`;
+  if (g.type === 'bubbles') return head + `<div class="card"><p class="small muted" style="margin:0">Tap every bubble whose answer equals the target, then press Pop.</p>
+    <p style="text-align:center;font-size:2rem;margin:10px 0"><b>Target: ${b.T}</b></p>
+    <div class="dp-bubbles">${b.bubbles.map((x, i) => `<button class="dp-bub ${b.sel.has(i) ? 'on' : ''}" data-action="dp-bub" data-i="${i}">${esc(x.t)}</button>`).join('')}</div></div>
+    <button class="primary" data-action="dp-pop" style="width:100%;justify-content:center">Pop selected</button>`;
+  const side = (s, t) => `<div class="dp-side"><div class="small muted">${t}</div><div style="font-size:1.4rem">${s.tok.join(' + ')}</div><div class="tag">× ${s.m}</div></div>`;
+  return head + `<div class="card"><p class="small muted" style="margin:0 0 8px">Each side is the sum of its numbers times its multiplier. Which side is bigger?</p>
+    <div class="dp-sides">${side(b.L, 'Left')}${side(b.R, 'Right')}</div></div>
+    <div class="row"><button class="grow" data-action="dp-big" data-v="L" style="justify-content:center">Left bigger</button><button class="grow" data-action="dp-big" data-v="E" style="justify-content:center">Equal</button><button class="grow" data-action="dp-big" data-v="R" style="justify-content:center">Right bigger</button></div>`;
+}
+function dpGamesList() {
+  setHeader('Number games', 'Timed, 90 seconds each');
+  const b = dpState().games || {};
+  return `<div class="card"><p class="small muted">Your friend's report says the real test has short timed games, including maths bubbles and a "which is bigger" task. These are my own practice versions, not the real thing.</p>
+    <ul class="plain"><li><div class="row between"><b>Number bubbles</b><span class="tag">best ${b.best_bubbles ?? '–'}</span></div><span class="small muted">Pick every expression equal to the target.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="bubbles">Start (90 s)</button></div></li>
+    <li><div class="row between"><b>Bigger, equal or smaller</b><span class="tag">best ${b.best_big ?? '–'}</span></div><span class="small muted">Compare two sums with multipliers.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="big">Start (90 s)</button></div></li></ul></div>
+    <a class="btn" href="#dp">Back</a>`;
+}
+
 const DPVIEWS = {
   dp(sub) {
     const [s, arg] = (sub || '').split(/-(.*)/s);
@@ -251,6 +319,8 @@ const DPVIEWS = {
     if (sub === 'run') return dpRunView();
     if (sub === 'hist') return dpHist();
     if (sub === 'typing') return dpTypingView();
+    if (sub === 'games') return dpGamesList();
+    if (sub === 'game') return dpGameView();
     if (sub === 'proof') return dpProofList();
     if (sub === 'fit') return dpFitList();
     if (s === 'proof') return dpProofView(+arg);
@@ -300,6 +370,14 @@ const DPACT = {
     if (el.value) f[el.dataset.k] = +el.value; else delete f[el.dataset.k];
     save(); render();
   },
+  'dp-game'(el) { dpGameStart(el.dataset.t, 90); },
+  'dp-bub'(el) { const b = dpGame?.board; if (!b || dpGame.done) return; const i = +el.dataset.i; b.sel.has(i) ? b.sel.delete(i) : b.sel.add(i); render(); },
+  'dp-pop'() {
+    const g = dpGame; if (!g || g.done) return; const b = g.board;
+    b.bubbles.forEach((x, i) => { if (b.sel.has(i)) x.ok ? g.ok++ : g.bad++; else if (x.ok) g.bad++; });
+    g.board = dpBubbleBoard(); render();
+  },
+  'dp-big'(el) { const g = dpGame; if (!g || g.done) return; const b = g.board, ans = b.lv > b.rv ? 'L' : b.lv < b.rv ? 'R' : 'E'; el.dataset.v === ans ? g.ok++ : g.bad++; g.board = dpBigBoard(); render(); },
   'dp-typing-again'() { setTimeout(render, 0); },
   'dp-fit-reset'(el) { delete dpState().fit[el.dataset.set]; save(); render(); },
 };

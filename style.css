@@ -244,3 +244,9 @@ ul.pts li { margin: 4px 0; }
 .check.dp-right { background: var(--accent-soft); border-radius: 8px; }
 .check.dp-wrong { background: var(--warn-soft); border-radius: 8px; }
 @media (max-width: 400px) { .tabs a { font-size: .6rem; } }
+
+.dp-bubbles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dp-bub { min-height: 56px; border-radius: 28px; font-size: 1.1rem; justify-content: center; }
+.dp-bub.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dp-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
+.dp-side { padding: 14px 6px; border: 1px solid var(--line); border-radius: var(--radius); }
