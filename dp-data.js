@@ -22,7 +22,7 @@ const DP_GUIDE = [
   { h: 'What this test probably is', items: [
     "DP World uses an online assessment from Criteria Corp. The best-known Criteria test is the CCAT: 50 multiple-choice questions in 15 minutes, no calculator, mixed question types, and no penalty for a wrong answer. Your invitation says 30–60 minutes in total, so there are likely extra parts (for example proofreading, work-style or personality questions). Re-read the invitation email and note every part and its time limit before you start.",
     "Almost nobody finishes all 50. Employers see how many you got right (and your percentile against others), so speed and accuracy both count.",
-    "I cannot see inside your invitation, so treat the layout here as a close practice, not a copy of the real paper." ] },
+    "Your invitation (30–60 minutes, Criteria) says the test works on mobile, tablet or desktop, and that practice questions appear before it begins. It does not list the parts, so treat this app as close practice, not a copy of the real paper. Expiry: Sun 25 Oct 6:45 PM AEDT = 1:45 PM Dhaka; if the session expires mid-test you cannot finish, so start early in the day, never near the deadline." ] },
   { h: 'The three question families in the 15-minute part', items: [
     "Verbal: synonyms, antonyms, analogies, odd-one-out, sentence completion, spelling, and short logic statements (all/some/none).",
     "Maths and logic: percentages, ratios, averages, speed, work-and-time, fractions, and number series. Everything is mental arithmetic; for you, payroll-style sums (basic %, per-day pay, overtime) are an advantage.",
