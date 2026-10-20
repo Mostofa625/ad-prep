@@ -52,7 +52,7 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; outline: none; }
 
 .tabs {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-  display: grid; grid-template-columns: repeat(7, 1fr);
+  display: grid; grid-template-columns: repeat(8, 1fr);
   background: var(--card);
   border-top: 1px solid var(--line);
   padding-bottom: env(safe-area-inset-bottom);
@@ -229,3 +229,18 @@ ul.pts li { margin: 4px 0; }
   table.nt.stack td:first-child { font-weight: 600; padding-bottom: 3px; }
   table.nt.stack td[data-l]:not([data-l=""])::before { content: attr(data-l) ": "; color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .02em; }
 }
+
+/* DP World tab */
+.dp-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.dp-tile { display: flex; flex-direction: column; gap: 4px; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; color: var(--text); }
+.dp-tile b { font-size: .98rem; }
+.dp-tile span { font-size: .8rem; color: var(--muted); }
+.dp-para { text-align: left; line-height: 2.1; font-size: 1.02rem; }
+.dp-tok { padding: 2px 3px; border-radius: 5px; cursor: pointer; }
+.dp-tok.on { background: var(--warn-soft); outline: 1px solid var(--warn); }
+.dp-tok.ok { background: var(--accent-soft); outline: 1px solid var(--ok); }
+.dp-tok.miss { background: var(--warn-soft); outline: 2px dashed var(--warn); }
+.dp-tok.bad { text-decoration: line-through; opacity: .7; }
+.check.dp-right { background: var(--accent-soft); border-radius: 8px; }
+.check.dp-wrong { background: var(--warn-soft); border-radius: 8px; }
+@media (max-width: 400px) { .tabs a { font-size: .6rem; } }

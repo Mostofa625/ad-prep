@@ -418,8 +418,8 @@ const actions = {
     S = blank(); save(); render(); toast('Erased');
   },
 };
-Object.assign(views, PRACTICE.views, STUDY.views);
-Object.assign(actions, PRACTICE.actions, STUDY.actions);
+Object.assign(views, PRACTICE.views, STUDY.views, DP.views);
+Object.assign(actions, PRACTICE.actions, STUDY.actions, DP.actions);
 
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-action]');
