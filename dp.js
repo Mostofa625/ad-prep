@@ -272,9 +272,67 @@ function dpBigBoard() {
   if (Math.random() < 0.25) for (let n = 0; n < 200 && val(L) !== val(R); n++) R = side();
   return { L, R, lv: val(L), rv: val(R) };
 }
+
+// ---------- Shape-fit puzzle ----------
+const DP_COLORS = ['#e8b84a', '#4a9be8', '#e86f5a', '#5ab88a', '#a07ae0', '#e08ab8'];
+const dpNorm = cells => { const mr = Math.min(...cells.map(c => c[0])), mc = Math.min(...cells.map(c => c[1])); return cells.map(([r, c]) => [r - mr, c - mc]).sort((a, b) => a[0] - b[0] || a[1] - b[1]); };
+const dpRot = cells => dpNorm(cells.map(([r, c]) => [c, -r]));
+function dpFitBoard() {
+  for (let attempt = 0; attempt < 300; attempt++) {
+    const h = dpRnd(3, 5), w = dpRnd(4, 5), mask = new Set();
+    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) mask.add(r * 10 + c);
+    for (let k = dpRnd(0, 3); k > 0; k--) { // nibble a few edge cells
+      const r = dpRnd(0, h - 1), c = dpRnd(0, w - 1);
+      if ((r === 0 || r === h - 1 || c === 0 || c === w - 1) && mask.size > 9) mask.delete(r * 10 + c);
+    }
+    const free = new Set(mask), pieces = [];
+    const nb = k => [k - 10, k + 10, k - 1, k + 1].filter(x => free.has(x) && Math.abs((x % 10) - (k % 10)) <= 1);
+    let ok = true;
+    while (free.size) {
+      const start = [...free].sort((a, b) => nb(a).length - nb(b).length)[0];
+      const size = Math.min(free.size, dpRnd(3, 4)); const cells = [start]; free.delete(start);
+      while (cells.length < size) {
+        const opts = cells.flatMap(nb); if (!opts.length) break;
+        const n = opts[dpRnd(0, opts.length - 1)]; free.delete(n); cells.push(n);
+      }
+      if (cells.length < 3) { ok = false; break; }
+      pieces.push(cells);
+    }
+    if (!ok || pieces.length < 2 || pieces.length > 5) continue;
+    return {
+      mask, h, w, placed: {}, sel: null,
+      pieces: pieces.map((p, i) => { let s = dpNorm(p.map(k => [Math.floor(k / 10), k % 10])); for (let t = dpRnd(0, 3); t > 0; t--) s = dpRot(s); return { id: i, cells: s, placed: false }; }),
+    };
+  }
+  return null;
+}
+function dpFitView() {
+  const b = dpGame.board;
+  const cells = [];
+  for (let r = 0; r < b.h; r++) for (let c = 0; c < b.w; c++) {
+    const k = r * 10 + c;
+    if (!b.mask.has(k)) { cells.push('<span></span>'); continue; }
+    const p = b.placed[k];
+    cells.push(`<button class="dp-cell ${p !== undefined ? 'full' : ''}" style="${p !== undefined ? `background:${DP_COLORS[p % 6]}` : ''}" data-action="dp-cell" data-k="${k}" aria-label="cell"></button>`);
+  }
+  const tray = b.pieces.map(p => { if (p.placed) return '';
+    const h = Math.max(...p.cells.map(c => c[0])) + 1, w = Math.max(...p.cells.map(c => c[1])) + 1;
+    const set = new Set(p.cells.map(c => c[0] * 10 + c[1])); const g = [];
+    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) g.push(set.has(r * 10 + c) ? `<i style="background:${DP_COLORS[p.id % 6]}">${r === p.cells[0][0] && c === p.cells[0][1] ? '•' : ''}</i>` : '<i class="gap"></i>');
+    return `<button class="dp-piece ${b.sel === p.id ? 'sel' : ''}" data-action="dp-piece" data-i="${p.id}" aria-label="piece"><span style="display:grid;grid-template-columns:repeat(${w},22px);gap:2px">${g.join('')}</span></button>`; }).join('');
+  return `<div class="card"><p class="small muted" style="margin:0 0 8px">Fill the grey shape exactly. Tap a piece, rotate it if needed, then tap a grey square: the piece's dotted square lands there. Tap a placed piece to pick it up again.</p>
+    <div class="dp-fitgrid" style="grid-template-columns:repeat(${b.w},44px)">${cells.join('')}</div></div>
+    <div class="card"><div class="dp-tray">${tray || '<span class="muted small">All pieces placed.</span>'}</div></div>
+    <div class="row"><button data-action="dp-rotate" ${b.sel === null ? 'disabled' : ''}>⟳ Rotate</button><button data-action="dp-fit-reset2">Reset</button><button data-action="dp-fit-skip">Skip</button></div>`;
+}
+function dpFitCheck() {
+  const g = dpGame, b = g.board;
+  if (Object.keys(b.placed).length === b.mask.size) { g.ok++; g.board = dpFitBoard(); }
+}
+
 function dpGameStart(type, secs) {
   clearInterval(dpGameTick);
-  dpGame = { type, end: Date.now() + secs * 1000, ok: 0, bad: 0, done: false, board: type === 'bubbles' ? dpBubbleBoard() : dpBigBoard() };
+  dpGame = { type, end: Date.now() + secs * 1000, ok: 0, bad: 0, done: false, board: type === 'bubbles' ? dpBubbleBoard() : type === 'fit' ? dpFitBoard() : dpBigBoard() };
   dpGameTick = setInterval(() => {
     if (!dpGame || location.hash !== '#dp/game') { clearInterval(dpGameTick); return; }
     const left = Math.round((dpGame.end - Date.now()) / 1000), el = document.getElementById('dpgclock');
@@ -285,12 +343,13 @@ function dpGameStart(type, secs) {
 }
 function dpGameView() {
   const g = dpGame; if (!g) { location.hash = '#dp/games'; return ''; }
-  setHeader(g.type === 'bubbles' ? 'Number bubbles' : 'Bigger, equal or smaller', 'Speed and accuracy');
+  setHeader(g.type === 'bubbles' ? 'Number bubbles' : g.type === 'fit' ? 'Shape fit' : 'Bigger, equal or smaller', 'Speed and accuracy');
   const left = Math.max(0, Math.round((g.end - Date.now()) / 1000));
-  if (g.done) return `<div class="card accent"><h3>Score: ${g.ok - g.bad}</h3><p class="small">${g.ok} right · ${g.bad} wrong. Wrong answers cost a point here, so only tap when you are fairly sure. (The real test's scoring is not published, so treat this as speed practice.)</p></div>
+  if (g.done) return `<div class="card accent"><h3>Score: ${g.ok - g.bad}</h3><p class="small">${g.ok} right · ${g.bad} wrong. ${g.type === 'fit' ? 'Score is puzzles solved.' : 'Wrong answers cost a point here, so only tap when you are fairly sure.'} (The real test's scoring is not published, so treat this as speed practice.)</p></div>
     <div class="row"><button class="primary" data-action="dp-game" data-t="${g.type}">Play again</button><a class="btn" href="#dp/games">Back</a></div>`;
   const b = g.board;
-  const head = `<div class="row between" style="margin-bottom:8px"><span id="dpgclock" class="timer" style="font-size:1.4rem">${dpMmss(left)}</span><span class="tag">${g.ok} right · ${g.bad} wrong</span></div>`;
+  const head = `<div class="row between" style="margin-bottom:8px"><span id="dpgclock" class="timer" style="font-size:1.4rem">${dpMmss(left)}</span><span class="tag">${g.type === 'fit' ? g.ok + ' solved' : g.ok + ' right · ' + g.bad + ' wrong'}</span></div>`;
+  if (g.type === 'fit') return head + dpFitView();
   if (g.type === 'bubbles') return head + `<div class="card"><p class="small muted" style="margin:0">Tap every bubble whose answer equals the target, then press Pop.</p>
     <p style="text-align:center;font-size:2rem;margin:10px 0"><b>Target: ${b.T}</b></p>
     <div class="dp-bubbles">${b.bubbles.map((x, i) => `<button class="dp-bub ${b.sel.has(i) ? 'on' : ''}" data-action="dp-bub" data-i="${i}">${esc(x.t)}</button>`).join('')}</div></div>
@@ -301,10 +360,11 @@ function dpGameView() {
     <div class="row"><button class="grow" data-action="dp-big" data-v="L" style="justify-content:center">Left bigger</button><button class="grow" data-action="dp-big" data-v="E" style="justify-content:center">Equal</button><button class="grow" data-action="dp-big" data-v="R" style="justify-content:center">Right bigger</button></div>`;
 }
 function dpGamesList() {
-  setHeader('Number games', 'Timed, 90 seconds each');
+  setHeader('Number games', 'Timed practice');
   const b = dpState().games || {};
   return `<div class="card"><p class="small muted">Your friend's report says the real test has short timed games, including maths bubbles and a "which is bigger" task. These are my own practice versions, not the real thing.</p>
     <ul class="plain"><li><div class="row between"><b>Number bubbles</b><span class="tag">best ${b.best_bubbles ?? '–'}</span></div><span class="small muted">Pick every expression equal to the target.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="bubbles">Start (90 s)</button></div></li>
+    <li><div class="row between"><b>Shape fit</b><span class="tag">best ${b.best_fit ?? '–'}</span></div><span class="small muted">Fill the grey shape with the pieces. Rotate them as needed.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="fit">Start (3 min)</button></div></li>
     <li><div class="row between"><b>Bigger, equal or smaller</b><span class="tag">best ${b.best_big ?? '–'}</span></div><span class="small muted">Compare two sums with multipliers.</span><div class="row" style="margin-top:6px"><button data-action="dp-game" data-t="big">Start (90 s)</button></div></li></ul></div>
     <a class="btn" href="#dp">Back</a>`;
 }
@@ -370,7 +430,25 @@ const DPACT = {
     if (el.value) f[el.dataset.k] = +el.value; else delete f[el.dataset.k];
     save(); render();
   },
-  'dp-game'(el) { dpGameStart(el.dataset.t, 90); },
+  'dp-game'(el) { dpGameStart(el.dataset.t, el.dataset.t === 'fit' ? 180 : 90); },
+  'dp-piece'(el) { const b = dpGame?.board; if (!b) return; const i = +el.dataset.i; b.sel = b.sel === i ? null : i; render(); },
+  'dp-rotate'() { const b = dpGame?.board; if (!b || b.sel === null) return; const p = b.pieces[b.sel]; p.cells = dpRot(p.cells); render(); },
+  'dp-cell'(el) {
+    const g = dpGame; if (!g || g.done) return; const b = g.board, k = +el.dataset.k, here = b.placed[k];
+    if (here !== undefined) { // pick the piece up again
+      for (const kk of Object.keys(b.placed)) if (b.placed[kk] === here) delete b.placed[kk];
+      b.pieces[here].placed = false; b.sel = here; return render();
+    }
+    if (b.sel === null) return toast('Tap a piece first');
+    const p = b.pieces[b.sel], r0 = Math.floor(k / 10), c0 = k % 10, [ar, ac] = p.cells[0];
+    const spots = p.cells.map(([r, c]) => (r0 + r - ar) * 10 + (c0 + c - ac));
+    const inside = p.cells.every(([r, c]) => { const rr = r0 + r - ar, cc = c0 + c - ac; return cc >= 0 && cc < b.w && b.mask.has(rr * 10 + cc) && b.placed[rr * 10 + cc] === undefined; });
+    if (!inside) return toast('It does not fit there');
+    spots.forEach(s => b.placed[s] = p.id); p.placed = true; b.sel = b.pieces.find(x => !x.placed)?.id ?? null;
+    dpFitCheck(); render();
+  },
+  'dp-fit-reset2'() { const b = dpGame?.board; if (!b) return; b.placed = {}; b.pieces.forEach(p => p.placed = false); b.sel = null; render(); },
+  'dp-fit-skip'() { if (!dpGame) return; dpGame.board = dpFitBoard(); render(); },
   'dp-bub'(el) { const b = dpGame?.board; if (!b || dpGame.done) return; const i = +el.dataset.i; b.sel.has(i) ? b.sel.delete(i) : b.sel.add(i); render(); },
   'dp-pop'() {
     const g = dpGame; if (!g || g.done) return; const b = g.board;

@@ -250,3 +250,12 @@ ul.pts li { margin: 4px 0; }
 .dp-bub.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 .dp-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
 .dp-side { padding: 14px 6px; border: 1px solid var(--line); border-radius: var(--radius); }
+
+.dp-fitgrid { display: grid; gap: 3px; justify-content: center; margin: 6px 0; }
+.dp-cell { width: 44px; height: 44px; padding: 0; min-height: 0; border-radius: 6px; background: #c9ccd0; border: 1px solid #9aa0a6; }
+.dp-cell.full { border-color: rgba(0,0,0,.25); }
+.dp-tray { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.dp-piece { padding: 8px; min-height: 0; border-radius: 10px; }
+.dp-piece.sel { outline: 3px solid var(--accent); }
+.dp-piece i { width: 22px; height: 22px; border-radius: 4px; font-style: normal; font-size: 1rem; line-height: 22px; text-align: center; color: rgba(0,0,0,.6); }
+.dp-piece i.gap { background: transparent; }
