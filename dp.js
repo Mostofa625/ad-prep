@@ -4,7 +4,7 @@
 
 const DP_MOCK_N = 50, DP_MOCK_SECS = 15 * 60;
 const DP_MIX = [['Verbal', 15], ['Maths', 15], ['Series & patterns', 10], ['Spatial', 6], ['Logic', 4]];
-const DP_CATS = ['Verbal', 'Maths', 'Series & patterns', 'Spatial', 'Logic'];
+const DP_CATS = ['Verbal', 'Maths', 'Series & patterns', 'Spatial', 'Logic', 'Excel & Office', 'Computer literacy'];
 const DPBY = Object.fromEntries(DPQ.map(q => [q.id, q]));
 const DPL = ['A', 'B', 'C', 'D'];
 let dpRun = null; // { mode, ids, i, ans, start, limit, timed, shown }
@@ -41,7 +41,8 @@ function dpHub() {
     <div class="dp-menu">
       <a class="dp-tile" href="#dp/guide"><b>☰ What to know</b><span>Test format, pace, tactics</span></a>
       <a class="dp-tile" href="#dp/mockintro"><b>◷ 50-Q timed mock</b><span>15 minutes, mixed, like CCAT</span></a>
-      <a class="dp-tile" href="#dp/types"><b>✓ Practice by type</b><span>Verbal · Maths · Series · Spatial · Logic</span></a>
+      <a class="dp-tile" href="#dp/types"><b>✓ Practice by type</b><span>Verbal · Maths · Series · Spatial · Logic · Excel · Computer</span></a>
+      <a class="dp-tile" href="#dp/typing"><b>⌨ Typing test</b><span>60 seconds, speed and accuracy</span></a>
       <a class="dp-tile" href="#dp/proof"><b>✎ Proofreading</b><span>${DP_PROOF.length} passages, tap the mistakes</span></a>
       <a class="dp-tile" href="#dp/fit"><b>⚖ Work-fit sets</b><span>Sort statements into 5 groups</span></a>
       <a class="dp-tile" href="#dp/hist"><b>▤ My scores</b><span>${mocks.length ? `Last mock: ${last.ok}/${last.n}` : 'No mocks yet'}</span></a>
@@ -193,6 +194,53 @@ function dpFitView(i) {
     <div class="row"><a class="btn" href="#dp/fit">All sets</a><button class="ghost" data-action="dp-fit-reset" data-set="${i}">Clear</button></div>`;
 }
 
+let dpTyp = null;
+function dpTypingView() {
+  setHeader('Typing test', '60 seconds');
+  const best = dpState().typing;
+  dpTyp = { text: DP_TYPING[Math.floor(Math.random() * DP_TYPING.length)], start: 0, done: false, timer: null };
+  return `<div class="card"><p class="small muted">Type the text below exactly, including capitals and punctuation. The clock starts when you type the first letter. ${best ? `Best so far: <b>${best.wpm} wpm</b> at ${best.acc}% accuracy.` : ''}</p>
+    <p id="dptext" class="dp-para" style="line-height:1.7">${esc(dpTyp.text)}</p>
+    <textarea id="dp-type" rows="5" placeholder="Start typing here" style="width:100%" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+    <div class="row between small" style="margin-top:6px"><span>Time left: <b id="dptleft">1:00</b></span><span id="dptlive" class="muted"></span></div></div>
+    <div id="dptres"></div>
+    <div class="row"><a class="btn" href="#dp/typing" data-action="dp-typing-again">New passage</a><a class="btn" href="#dp">Back</a></div>`;
+}
+function dpTypingScore(done) {
+  const t = dpTyp; if (!t) return null;
+  const typed = document.getElementById('dp-type').value;
+  const secs = Math.max(1, done ? 60 : (Date.now() - t.start) / 1000);
+  let ok = 0; for (let i = 0; i < typed.length; i++) if (typed[i] === t.text[i]) ok++;
+  const acc = typed.length ? Math.round(ok * 100 / typed.length) : 100;
+  const wpm = Math.round((ok / 5) / (secs / 60));
+  return { wpm, acc, chars: typed.length };
+}
+document.addEventListener('input', e => {
+  if (e.target.id !== 'dp-type' || !dpTyp || dpTyp.done) return;
+  const t = dpTyp;
+  if (!t.start) {
+    t.start = Date.now();
+    t.timer = setInterval(() => {
+      const left = 60 - Math.round((Date.now() - t.start) / 1000);
+      const el = document.getElementById('dptleft'); if (!el || location.hash !== '#dp/typing') { clearInterval(t.timer); return; }
+      el.textContent = dpMmss(left);
+      const s = dpTypingScore(false); document.getElementById('dptlive').textContent = `${s.wpm} wpm · ${s.acc}%`;
+      if (left <= 0) dpTypingFinish();
+    }, 500);
+  }
+  if (e.target.value.length >= t.text.length) dpTypingFinish();
+});
+function dpTypingFinish() {
+  const t = dpTyp; if (!t || t.done) return;
+  t.done = true; clearInterval(t.timer);
+  const ta = document.getElementById('dp-type');
+  const s = dpTypingScore(Date.now() - t.start >= 59000);
+  ta.disabled = true;
+  const st = dpState(); if (!st.typing || s.wpm > st.typing.wpm) st.typing = { wpm: s.wpm, acc: s.acc }; save();
+  document.getElementById('dptres').innerHTML = `<div class="card ${s.acc >= 95 && s.wpm >= 35 ? 'accent' : 'warn'}"><h3>${s.wpm} words per minute · ${s.acc}% accuracy</h3>
+    <p class="small muted">Words per minute counts only correct characters (5 per word). Accuracy matters as much as speed: aim for 95%+. Tap New passage to try again.</p></div>`;
+}
+
 const DPVIEWS = {
   dp(sub) {
     const [s, arg] = (sub || '').split(/-(.*)/s);
@@ -202,6 +250,7 @@ const DPVIEWS = {
     if (sub === 'types') return dpTypes();
     if (sub === 'run') return dpRunView();
     if (sub === 'hist') return dpHist();
+    if (sub === 'typing') return dpTypingView();
     if (sub === 'proof') return dpProofList();
     if (sub === 'fit') return dpFitList();
     if (s === 'proof') return dpProofView(+arg);
@@ -251,6 +300,7 @@ const DPACT = {
     if (el.value) f[el.dataset.k] = +el.value; else delete f[el.dataset.k];
     save(); render();
   },
+  'dp-typing-again'() { setTimeout(render, 0); },
   'dp-fit-reset'(el) { delete dpState().fit[el.dataset.set]; save(); render(); },
 };
 const DP = { views: DPVIEWS, actions: DPACT };
