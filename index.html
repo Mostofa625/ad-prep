@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>AD Prep</title>
   <meta name="description" content="Offline study planner for Grade 9 Assistant Director exams">
-  <meta name="theme-color" content="#1f6f5c">
+  <meta name="theme-color" content="#f2f4f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e0f11" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preload" href="fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,14 +22,14 @@
   <main id="view" tabindex="-1"></main>
 
   <nav class="tabs" aria-label="Sections">
-    <a href="#today" data-tab="today"><span aria-hidden="true">☀</span>Today</a>
-    <a href="#plan" data-tab="plan"><span aria-hidden="true">▦</span>Plan</a>
-    <a href="#practice" data-tab="practice"><span aria-hidden="true">✓</span>Practice</a>
-    <a href="#study" data-tab="study"><span aria-hidden="true">☰</span>Study</a>
-    <a href="#mistakes" data-tab="mistakes"><span aria-hidden="true">✎</span>Mistakes</a>
-    <a href="#essays" data-tab="essays"><span aria-hidden="true">¶</span>Essays</a>
-    <a href="#dp" data-tab="dp"><span aria-hidden="true">✈</span>DP</a>
-    <a href="#more" data-tab="more"><span aria-hidden="true">⋯</span>More</a>
+    <a href="#today" data-tab="today"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Today</a>
+    <a href="#plan" data-tab="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Plan</a>
+    <a href="#practice" data-tab="practice"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>Practice</a>
+    <a href="#study" data-tab="study"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>Study</a>
+    <a href="#mistakes" data-tab="mistakes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>Mistakes</a>
+    <a href="#essays" data-tab="essays"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z"/><path d="M9 13h8M9 17h8M9 9h3"/></svg>Essays</a>
+    <a href="#dp" data-tab="dp"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>DP</a>
+    <a href="#more" data-tab="more"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>More</a>
   </nav>
 
   <script src="data.js"></script>

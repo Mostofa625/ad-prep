@@ -39,15 +39,15 @@ function dpHub() {
   return `
     <div class="card accent"><p style="margin:0"><b>Online assessment deadline: Sun 25 Oct, 1:45 PM Dhaka.</b> Plan: a mock on Day 1, weak-type practice on Day 2, a second mock on Day 3.</p></div>
     <div class="dp-menu">
-      <a class="dp-tile" href="#dp/guide"><b>☰ What to know</b><span>Test format, pace, tactics</span></a>
-      <a class="dp-tile" href="#dp/mockintro"><b>◷ 50-Q timed mock</b><span>15 minutes, mixed, like CCAT</span></a>
-      <a class="dp-tile" href="#dp/types"><b>✓ Practice by type</b><span>Verbal · Maths · Series · Spatial · Logic · Excel · Computer</span></a>
-      <a class="dp-tile" href="#dp/agree"><b>☑ Agree scale</b><span>Work-style statements with repeats</span></a>
-      <a class="dp-tile" href="#dp/games"><b>● Number games</b><span>Bubbles, shapes, patterns, marble</span></a>
-      <a class="dp-tile" href="#dp/typing"><b>⌨ Typing test</b><span>60 seconds, speed and accuracy</span></a>
-      <a class="dp-tile" href="#dp/proof"><b>✎ Proofreading</b><span>${DP_PROOF.length} passages, tap the mistakes</span></a>
-      <a class="dp-tile" href="#dp/fit"><b>⚖ Work-fit sets</b><span>Sort statements into 5 groups</span></a>
-      <a class="dp-tile" href="#dp/hist"><b>▤ My scores</b><span>${mocks.length ? `Last mock: ${last.ok}/${last.n}` : 'No mocks yet'}</span></a>
+      <a class="dp-tile" href="#dp/guide"><b>What to know</b><span>Test format, pace, tactics</span></a>
+      <a class="dp-tile" href="#dp/mockintro"><b>50-Q timed mock</b><span>15 minutes, mixed, like CCAT</span></a>
+      <a class="dp-tile" href="#dp/types"><b>Practice by type</b><span>Verbal · Maths · Series · Spatial · Logic · Excel · Computer</span></a>
+      <a class="dp-tile" href="#dp/agree"><b>Agree scale</b><span>Work-style statements with repeats</span></a>
+      <a class="dp-tile" href="#dp/games"><b>Number games</b><span>Bubbles, shapes, patterns, marble</span></a>
+      <a class="dp-tile" href="#dp/typing"><b>Typing test</b><span>60 seconds, speed and accuracy</span></a>
+      <a class="dp-tile" href="#dp/proof"><b>Proofreading</b><span>${DP_PROOF.length} passages, tap the mistakes</span></a>
+      <a class="dp-tile" href="#dp/fit"><b>Work-fit sets</b><span>Sort statements into 5 groups</span></a>
+      <a class="dp-tile" href="#dp/hist"><b>My scores</b><span>${mocks.length ? `Last mock: ${last.ok}/${last.n}` : 'No mocks yet'}</span></a>
     </div>
     <p class="muted small">${DPQ.length} original questions. Wrong answers cost nothing in the real test, so always guess.</p>`;
 }
