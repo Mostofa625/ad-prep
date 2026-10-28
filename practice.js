@@ -76,9 +76,11 @@ function subjectTestIds(subj, week) {
   return shuffle(qs.map(q => q.id));
 }
 
-function startTest(mode, ids, mins) {
-  const ord = Object.fromEntries(ids.map(id => [id, shuffle([0, 1, 2, 3])]));
-  S.test = { id: uid(), mode, ids, ord, ans: {}, flag: {}, i: 0, start: Date.now(), limit: mins * 60 };
+// opt.keepOrder: options stay ক খ গ ঘ as printed (past papers); opt.neg: the paper's own negative marking; opt.paper: its id.
+function startTest(mode, ids, mins, opt = {}) {
+  const ord = Object.fromEntries(ids.map(id => [id, opt.keepOrder ? [0, 1, 2, 3] : shuffle([0, 1, 2, 3])]));
+  S.test = { id: uid(), mode, ids, ord, ans: {}, flag: {}, i: 0, start: Date.now(), limit: mins * 60,
+    ...(opt.neg != null ? { neg: opt.neg } : {}), ...(opt.paper ? { paper: opt.paper } : {}) };
   save(); location.hash = 'practice/test';
 }
 
@@ -88,7 +90,7 @@ function score(t) {
     if (t.ans[id] === undefined) continue;
     t.ans[id] === QBY[id]?.a ? ok++ : wrong++;
   }
-  const neg = S.neg ?? 0.25;
+  const neg = t.neg ?? S.neg ?? 0.25;
   return { ok, wrong, skip: t.ids.length - ok - wrong, marks: Math.round((ok - wrong * neg) * 100) / 100, total: t.ids.length };
 }
 
@@ -106,7 +108,8 @@ function finishTest() {
       a: `${letter(t, id, q.a)}) ${q.o[q.a]}`, note: q.e || '', box: 0, due: addDays(TODAY, 1), created: TODAY });
     added++;
   }
-  S.attempts.push({ id: t.id, mode: t.mode, date: t.date, ids: t.ids, ord: t.ord, ans: t.ans, secs: t.secs });
+  S.attempts.push({ id: t.id, mode: t.mode, date: t.date, ids: t.ids, ord: t.ord, ans: t.ans, secs: t.secs,
+    ...(t.neg != null ? { neg: t.neg } : {}), ...(t.paper ? { paper: t.paper } : {}) });
   if (t.mode === 'Full mock') S.scores = S.scores.filter(x => x.date !== TODAY).concat({ date: TODAY, score: sc.marks });
   S.test = null; save();
   location.hash = 'practice/r-' + t.id;
