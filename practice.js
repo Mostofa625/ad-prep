@@ -137,6 +137,12 @@ function practiceHome() {
       <button class="primary" data-action="p-mock">Start full mock</button>
     </div>
 
+    <div class="card accent">
+      <h3>MoD-pattern mock: 100 MCQ · 60 min</h3>
+      <p class="small">Built like the real MoD 2023 paper: Bangla 25 (10 literature) · English 25 · Math 15 · GK 35 (10 everyday science, 6 defence and current affairs). Negative marking 0.50. Past MoD papers are left out so the Exams tab stays fresh.</p>
+      <button class="primary" data-action="p-modmock">Start MoD mock</button>
+    </div>
+
     <div class="card"><h3>Most repeated: ${REP_N} questions</h3>
       <p class="small">${REPEATED.length} questions appear in 3 or more of the 79 guide books, so they are the likeliest to come again. Most-repeated first; uses the subject chosen below.</p>
       <button class="primary" data-action="p-rep">Start most-repeated quiz</button>
@@ -270,6 +276,19 @@ const PRACTICE = {
       if (S.test && !confirm('Discard the test in progress?')) return;
       const ids = MOCK_MIX.flatMap(([s, n]) => pick(QUESTIONS.filter(q => q.s === s), n).map(q => q.id));
       startTest('Full mock', ids, MOCK_MINS);
+    },
+    'p-modmock'() {
+      if (S.test && !confirm('Discard the test in progress?')) return;
+      // Pattern of the real MoD AD 2023 paper; questions from MoD past papers (pm16/18/19/23) stay out of the draw.
+      const pool = QUESTIONS.filter(q => !/^pm(16|18|19|23)-/.test(q.id));
+      const take = (f, n, not = []) => pick(pool.filter(q => f(q) && !not.includes(q.id)), n).map(q => q.id);
+      const lit = take(q => q.s === 'Bangla' && q.t === 'সাহিত্য', 10);
+      const bn = take(q => q.s === 'Bangla' && q.t !== 'সাহিত্য', 15);
+      const sci = take(q => q.s === 'GK' && q.t === 'Everyday science', 10);
+      const now = take(q => /^x(ca|df)\d/.test(q.id), 6);
+      const gk = take(q => q.s === 'GK' && q.t !== 'Everyday science' && !/^x(ca|df)\d/.test(q.id), 19);
+      const ids = [...lit, ...bn, ...take(q => q.s === 'English', 25), ...take(q => q.s === 'Math', 15), ...sci, ...now, ...gk];
+      startTest('MoD mock', ids, 60, { neg: 0.5 });
     },
     'p-subj'(el) { pf = { s: el.dataset.v, t: '' }; render(); },
     'p-quick'() {

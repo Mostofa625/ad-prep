@@ -79,11 +79,61 @@ const WEEK_TOPICS = [
 ];
 
 const DEFAULT_EXAMS = [
-  { id: 'mod', name: 'Ministry of Defence – AD (non-technical)', date: '', status: 'Applied' },
+  { id: 'mod', name: 'Ministry of Defence – AD (non-technical)', date: '2026-11-13', status: 'MCQ Fri 13 Nov 3:30–4:30 PM, Sher-e-Bangla Nagar Govt Boys\' High School. Roll 11025615' },
   { id: 'bepza', name: 'BEPZA – AD (Admin)', date: '', status: 'Applied' },
   { id: 'bhtpa', name: 'Bangladesh Hi-Tech Park Authority – AD', date: '', status: 'Applied' },
   { id: 'nsi', name: 'NSI – AD', date: '', status: 'Circular expected (check age limit, likely 32)' },
 ];
+
+// MoD AD MCQ on Fri 13 Nov 2026, 3:30–4:30 PM (admit card). Six-day sprint built 5 Nov 2026 from the pattern of the
+// real MoD 2023 paper (Bangla 25 with 10 literature, English 24, Math 15, GK 33 with 11 everyday science; 0.50 negative).
+// sessionsFor() uses these days instead of the generic mock/review routine.
+const NEG_RULE = 'Wrong answer costs 0.50: answer only when you can rule out two options.';
+const SPRINT = {
+  '2026-11-06': { kind: 'MoD sprint · day 1 of 6', note: 'Find your level on the real 2023 paper. ' + NEG_RULE, list: [
+    { id: 'p23', label: 'Exams tab: MoD 2023 real paper (60 min, −0.50)', mins: 75 },
+    { id: 'rev', label: 'Review every wrong and skipped answer; write down your 3 weakest topics', mins: 60 },
+    { id: 'def', label: 'Study: প্রতিরক্ষা মন্ত্রণালয় ও সশস্ত্র বাহিনী, then its Practice', mins: 45 },
+    { id: 'cur', label: 'Study: সাম্প্রতিক জুলাই–নভেম্বর ২০২৬, then its Practice', mins: 45 },
+    { id: 'lit', label: 'Bangla literature notes (10 of 25 Bangla questions in 2023)', mins: 60 },
+    { id: 'err', label: 'Mistakes tab: due cards', mins: 20 }] },
+  '2026-11-07': { kind: 'MoD sprint · day 2 of 6', note: 'Two more real MoD papers, then the heaviest GK block. ' + NEG_RULE, list: [
+    { id: 'p18', label: 'Exams tab: MoD 2018 and MoD 2016 papers', mins: 70 },
+    { id: 'rev', label: 'Review both papers', mins: 45 },
+    { id: 'sci', label: 'Everyday science: two 20-question quick quizzes (11 of 33 GK in 2023)', mins: 60 },
+    { id: 'eng', label: 'English: parts of speech, word formation, literature notes', mins: 60 },
+    { id: 'math', label: 'Math: geometry & mensuration, percentage & profit (notes + quiz)', mins: 45 },
+    { id: 'err', label: 'Mistakes tab: due cards', mins: 20 }] },
+  '2026-11-08': { kind: 'MoD sprint · day 3 of 6', note: 'First full mock in the MoD pattern. ' + NEG_RULE, list: [
+    { id: 'mock1', label: 'Practice tab: MoD-pattern mock #1 (100 Q, 60 min, −0.50)', mins: 75 },
+    { id: 'rev', label: 'Review the mock; log every wrong answer', mins: 60 },
+    { id: 'bn', label: 'Bangla grammar: বানান ও বাক্যশুদ্ধি, সমাস, সন্ধি, প্রকৃতি-প্রত্যয়', mins: 60 },
+    { id: 'bd', label: 'GK: Bangladesh history, Liberation War, Constitution (most-repeated quiz)', mins: 45 },
+    { id: 'err', label: 'Mistakes tab: due cards', mins: 20 }] },
+  '2026-11-09': { kind: 'MoD sprint · day 4 of 6', note: 'Last two real papers. ' + NEG_RULE, list: [
+    { id: 'p19', label: 'Exams tab: MoD 2019 and DGFI 2025 papers', mins: 95 },
+    { id: 'rev', label: 'Review both papers', mins: 45 },
+    { id: 'eng2', label: 'English: idioms, phrasal verbs, synonyms and antonyms, spelling', mins: 60 },
+    { id: 'math2', label: 'Math: algebra & indices, LCM & HCF, interest (notes + quiz)', mins: 60 },
+    { id: 'err', label: 'Mistakes tab: due cards', mins: 20 }] },
+  '2026-11-10': { kind: 'MoD sprint · day 5 of 6', note: 'Mock #2, then close the gaps. ' + NEG_RULE, list: [
+    { id: 'mock2', label: 'Practice tab: MoD-pattern mock #2', mins: 75 },
+    { id: 'rev', label: 'Review the mock', mins: 60 },
+    { id: 'weak', label: 'Practice tab: weak-topic quiz, twice', mins: 45 },
+    { id: 'cur2', label: 'News check: Booker winner (9 Nov), COP31, UN Secretary-General race; re-read সাম্প্রতিক', mins: 30 },
+    { id: 'err', label: 'Mistakes tab: all due cards', mins: 30 }] },
+  '2026-11-11': { kind: 'MoD sprint · day 6 of 6', note: 'Last mock. From tomorrow, nothing new. ' + NEG_RULE, list: [
+    { id: 'mock3', label: 'Practice tab: MoD-pattern mock #3', mins: 75 },
+    { id: 'rev', label: 'Review the mock', mins: 60 },
+    { id: 'rep', label: 'Practice tab: most-repeated quiz, twice', mins: 45 },
+    { id: 'rv', label: 'Study tab: revise lists of the notes you got wrong this week', mins: 45 },
+    { id: 'err', label: 'Mistakes tab: all due cards', mins: 30 }] },
+  '2026-11-12': { kind: 'Day before the MoD exam', note: 'No new topics. Sleep early.', list: [
+    { id: 'light', label: 'Light revision: defence and current-affairs notes, math formulas, trap lists', mins: 90 },
+    { id: 'docs', label: 'Print the admit card clearly; 2 black ballpoint pens; no phone, watch or calculator', mins: 20 },
+    { id: 'route', label: 'Plan the route to Sher-e-Bangla Nagar Govt Boys\' High School (Agargaon); be there by 3:00 PM', mins: 10 }] },
+  '2026-11-13': { kind: 'Exam day: MoD AD MCQ, 3:30 PM', note: 'Be in the hall by 3:00 PM (30 min early). Same signature as the application. ' + NEG_RULE, list: [] },
+};
 
 const SUBJECTS = ['English', 'Math', 'GK', 'Bangla', 'ICT / Mental ability', 'Written', 'Viva'];
 

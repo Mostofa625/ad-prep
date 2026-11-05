@@ -13,7 +13,13 @@ let S = load();
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...blank(), ...JSON.parse(raw) };
+    if (raw) {
+      const st = { ...blank(), ...JSON.parse(raw) };
+      // Admit card (5 Nov 2026): MoD MCQ is on 13 Nov. Fill the date in for phones that saved the exam list without it.
+      const mod = (st.exams || []).find(e => e.id === 'mod');
+      if (mod && !mod.date) { const d = DEFAULT_EXAMS.find(e => e.id === 'mod'); mod.date = d.date; mod.status = d.status; }
+      return st;
+    }
   } catch (e) { /* storage blocked or corrupt: start fresh */ }
   return blank();
 }
@@ -50,6 +56,7 @@ function sessionsFor(date = TODAY) {
   const dow = parse(date).getDay(); // 0 Sun … 5 Fri, 6 Sat
   const exam = nextExam(date);
   const examSoon = exam && diff(date, exam.date) <= 14;
+  if (typeof SPRINT !== 'undefined' && SPRINT[date]) return SPRINT[date];
   if (idx >= 0 && (week >= 11 || examSoon)) {
     if (exam && diff(date, exam.date) === 0) return { kind: 'Exam day', list: [], note: `${exam.name}: good luck!` };
     if (exam && diff(date, exam.date) === 1) return { kind: 'Day before exam', list: [
