@@ -105,7 +105,7 @@ const SPRINT = {
     { id: 'math', label: 'Math: geometry & mensuration, percentage & profit (notes + quiz)', mins: 45 },
     { id: 'err', label: 'Mistakes tab: due cards', mins: 20 }] },
   '2026-11-08': { kind: 'MoD sprint · day 3 of 6', note: 'First full mock in the MoD pattern. ' + NEG_RULE, list: [
-    { id: 'mock1', label: 'Practice tab: MoD-pattern mock #1 (100 Q, 60 min, −0.50)', mins: 75 },
+    { id: 'mock1', label: 'Exams tab: MoD model test 1 (100 Q, 60 min, −0.50); test 2 in the evening if you have time', mins: 75 },
     { id: 'rev', label: 'Review the mock; log every wrong answer', mins: 60 },
     { id: 'bn', label: 'Bangla grammar: বানান ও বাক্যশুদ্ধি, সমাস, সন্ধি, প্রকৃতি-প্রত্যয়', mins: 60 },
     { id: 'bd', label: 'GK: Bangladesh history, Liberation War, Constitution (most-repeated quiz)', mins: 45 },
@@ -117,13 +117,13 @@ const SPRINT = {
     { id: 'math2', label: 'Math: algebra & indices, LCM & HCF, interest (notes + quiz)', mins: 60 },
     { id: 'err', label: 'Mistakes tab: due cards', mins: 20 }] },
   '2026-11-10': { kind: 'MoD sprint · day 5 of 6', note: 'Mock #2, then close the gaps. ' + NEG_RULE, list: [
-    { id: 'mock2', label: 'Practice tab: MoD-pattern mock #2', mins: 75 },
+    { id: 'mock2', label: 'Exams tab: MoD model test 3 (test 4 in the evening if you have time)', mins: 75 },
     { id: 'rev', label: 'Review the mock', mins: 60 },
     { id: 'weak', label: 'Practice tab: weak-topic quiz, twice', mins: 45 },
     { id: 'cur2', label: 'News check: Booker winner (9 Nov), COP31, UN Secretary-General race; re-read সাম্প্রতিক', mins: 30 },
     { id: 'err', label: 'Mistakes tab: all due cards', mins: 30 }] },
   '2026-11-11': { kind: 'MoD sprint · day 6 of 6', note: 'Last mock. From tomorrow, nothing new. ' + NEG_RULE, list: [
-    { id: 'mock3', label: 'Practice tab: MoD-pattern mock #3', mins: 75 },
+    { id: 'mock3', label: 'Exams tab: MoD model test 5 (test 6 in the evening if you have time)', mins: 75 },
     { id: 'rev', label: 'Review the mock', mins: 60 },
     { id: 'rep', label: 'Practice tab: most-repeated quiz, twice', mins: 45 },
     { id: 'rv', label: 'Study tab: revise lists of the notes you got wrong this week', mins: 45 },
